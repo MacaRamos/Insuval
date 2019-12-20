@@ -11,6 +11,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
+        $this->TruncateTables([
+            'Rol',
+            'Permiso'
+        ]);
+        $this->call(RolSeeder::class);
+        $this->call(PermisoSeeder::class);
+    }
+    protected function TruncateTables(array $tables)
+    {
+        foreach ($tables as $table){
+            DB::table($table)->delete();
+            if ($table == 'Rol' || $table == 'Permiso'){
+                DB::statement('DBCC CHECKIDENT ('.$table.', RESEED, 0)');
+            }
+        }
     }
 }
