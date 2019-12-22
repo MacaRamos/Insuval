@@ -17,3 +17,8 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function(){
     Route::get('permiso/crear', 'PermisoController@crear')->name('crear_permiso');
     //Route::get('admin/permiso', 'Admin\PermisoController@index')->name('permiso');
 });
+Route::group(['prefix' => 'recetarioMagistral', 'namespace' => 'RecetarioMagistral'], function(){
+    Route::get('receta', 'RecetaController@index')->name('receta');
+    Route::get('receta/crear', 'RecetaController@crear')->name('crear_receta');
+    //Route::get('admin/permiso', 'Admin\PermisoController@index')->name('permiso');
+});
