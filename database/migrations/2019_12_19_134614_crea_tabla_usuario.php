@@ -20,6 +20,8 @@ class CreaTablaUsuario extends Migration
             $table->string('Usu_nombre',50);
             $table->string('Usu_apellido',50);
             $table->timestamps();
+            $table->charset = "utf8mb4";
+            $table->collation = "utf8mb4_spanish_ci";
         });
     }
 

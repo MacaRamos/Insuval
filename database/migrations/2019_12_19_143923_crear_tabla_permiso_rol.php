@@ -14,12 +14,12 @@ class CrearTablaPermisoRol extends Migration
     public function up()
     {
         Schema::create('PermisoRol', function (Blueprint $table) {
-            $table->bigIncrements('PRol_codigo');
             $table->unsignedInteger('Rol_codigo');
             $table->foreign('Rol_codigo','fk_permisoRol_rol')->references('Rol_codigo')->on('Rol');
             $table->unsignedInteger('Per_codigo');
             $table->foreign('Per_codigo','fk_permisoRol_permiso')->references('Per_codigo')->on('Permiso');
-            $table->timestamps();
+            $table->charset = "utf8mb4";
+            $table->collation = "utf8mb4_spanish_ci";
         });
     }
 
