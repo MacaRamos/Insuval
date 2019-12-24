@@ -5,6 +5,8 @@ Crear Menu
 @section('contenido')
 <div class="row">
     <div class="col-lg-12">
+        @include('includes.error-form')
+        @include('includes.mensaje-form')
         <div class="card card-info">
             <div class="card-header with-border">
                 <h3 class="card-title">Crear Menús</h3>
