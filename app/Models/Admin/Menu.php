@@ -10,7 +10,13 @@ class Menu extends Model
     protected $table = "Menu";
     protected $fillable = ['Men_nombre', 'Men_url', 'Men_icono'];
     protected $guarded = ['Men_id'];
-    protected $primaryKey = 'Men_codigo';
+    protected $primaryKey = 'Men_id';
+
+    public function roles()
+    {
+        //belongsToMany(string $related, string $table = null, string $foreignKey = null, string $otherKey = null, string $relation = null)
+        return $this->belongsToMany(Rol::class, 'MenuRol', 'Rol_codigo','Men_id');
+    }
 
     public function getHijos($padres, $line)
     {

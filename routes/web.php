@@ -27,6 +27,9 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function(){
     Route::get('rol/{Rol_codigo}/editar', 'RolController@editar')->name('editar_rol');
     Route::put('rol/{Rol_codigo}', 'RolController@actualizar')->name('actualizar_rol');
     Route::delete('rol/{Rol_codigo}', 'RolController@eliminar')->name('eliminar_rol');
+    /*RUTAS MENU-ROL*/
+    Route::get('menu-rol', 'MenuRolController@index')->name('menu_rol');
+    Route::post('menu-rol', 'MenuRolController@guardar')->name('guardar_menu_rol');
 });
 Route::group(['prefix' => 'recetarioMagistral', 'namespace' => 'RecetarioMagistral'], function(){
     Route::get('receta', 'RecetaController@index')->name('receta');
