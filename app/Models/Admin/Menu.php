@@ -15,7 +15,7 @@ class Menu extends Model
     public function roles()
     {
         //belongsToMany(string $related, string $table = null, string $foreignKey = null, string $otherKey = null, string $relation = null)
-        return $this->belongsToMany(Rol::class, 'MenuRol', 'Rol_codigo','Men_id');
+        return $this->belongsToMany(Rol::class, 'MenuRol', 'Men_id', 'Rol_codigo');
     }
 
     public function getHijos($padres, $line)

@@ -18,10 +18,15 @@ class MenuRolController extends Controller
     {
         $rols = Rol::orderBy('Rol_codigo')->pluck('Rol_nombre', 'Rol_codigo')->toArray();
         $menus = Menu::getMenu();
-        $menusRols = Menu::with('roles')->get()->toArray();
+        $menusRols = Menu::with('roles')->get()->pluck('roles', 'Men_id')->toArray();
         return view('admin.menuRol.index', compact('rols', 'menus', 'menusRols'));
     }
-
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function guardar(Request $request)
     {
         if ($request->ajax()) {

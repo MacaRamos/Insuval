@@ -27,19 +27,19 @@ Menú - Rol
                         </tr>
                     </thead>
                     <tbody>                        
-                        @foreach ($menus as $key => $menu)                        
+                        @foreach ($menus as $key => $menu)
                         @if ($menu["Men_codigo"] != 0)
                             @break
                         @endif
                             <tr>
-                                <td class="font-weight-bold"><i class="fa fa-arrows-alt"></i>{{$menu["Men_nombre"]}}</td>
+                                <td class="font-weight-bold"><i class="fa fa-arrows-alt"></i> {{$menu["Men_nombre"]}}</td>
                                 @foreach($rols as $id => $nombre)
                                     <td class="text-center">
                                         <input
                                         type="checkbox"
                                         class="menu_rol"
                                         name="menu_rol[]"
-                                        data-menuid={{$menu["Men_id"]}}
+                                        data-menuid={{$menu["Men_id"]}}                                        
                                         value="{{$id}}" {{in_array($id, array_column($menusRols[$menu["Men_id"]], "Rol_codigo"))? "checked" : ""}}>
                                     </td>
                                 @endforeach

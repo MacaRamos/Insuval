@@ -1,7 +1,7 @@
 $('.menu_rol').on('change', function () {
     var data = {
-        menu_id: $(this).data('menuid'),
-        rol_id: $(this).val(),
+        Men_id: $(this).data('menuid'),
+        Rol_codigo: $(this).val(),
         _token: $('input[name=_token]').val()
     };
     if ($(this).is(':checked')) {
@@ -9,7 +9,7 @@ $('.menu_rol').on('change', function () {
     } else {
         data.estado = 0
     }
-    ajaxRequest('/admin/menuRol', data);
+    ajaxRequest('/admin/menu-rol', data);
 });
 
 function ajaxRequest (url, data) {
