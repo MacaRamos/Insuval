@@ -25,13 +25,13 @@ class ValidacionMenu extends FormRequest
     public function rules()
     {
         return [
-            'Men_nombre' => 'required|max:50|unique:menu,men_nombre',//name del formulario de ingreso
+            'Men_nombre' => 'required|max:50|unique:menu,men_nombre,'.$this->route('Men_codigo').',Men_codigo',
             'Men_url' => ['required', 'max:100', new ValidarCampoUrl],
             'Men_icono' => 'nullable|max:50'
         ];
     }
 
-        public function messages()
+    public function messages()
     {
         return [
             'Men_nombre.required' => 'El campo nombre es requerido',

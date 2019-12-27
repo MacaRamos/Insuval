@@ -1,13 +1,11 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
-use App\Http\Controllers\Controller;
-use App\Http\Requests\ValidacionMenu;
-use App\Models\Admin\Menu;
 use Illuminate\Http\Request;
-
-class MenuController extends Controller
+use App\Http\Controllers\Controller;
+use App\Http\Requests\ValidacionRol;
+use App\Models\Admin\Rol;
+class RolController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,10 +14,9 @@ class MenuController extends Controller
      */
     public function index()
     {
-        $menus = Menu::getMenu();
-        return view('admin.menu.index', compact('menus'));
+        $datas = Rol::orderBy('Rol_codigo')->get();
+        return view('admin.rol.index', compact('datas'));
     }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -27,32 +24,19 @@ class MenuController extends Controller
      */
     public function crear()
     {
-        return view('admin.menu.crear');
+        return view('admin.rol.crear');
     }
-
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function guardar(ValidacionMenu $request)//Se cambia la clase Request por mi request
+    public function guardar(ValidacionRol $request)
     {
-        Menu::create($request->all());
-        return redirect('admin/menu')->with('mensaje','Menú creado con exito');
+        Rol::create($request->all());
+        return redirect('admin/rol')->with('mensaje', 'Rol creado con exito');
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function mostrar($id)
-    {
-        //
-    }
-
     /**
      * Show the form for editing the specified resource.
      *
@@ -61,9 +45,9 @@ class MenuController extends Controller
      */
     public function editar($id)
     {
-        //
+        $data = Rol::findOrFail($id);
+        return view('admin.rol.editar', compact('data'));
     }
-
     /**
      * Update the specified resource in storage.
      *
@@ -71,28 +55,25 @@ class MenuController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function actualizar(Request $request, $id)
+    public function actualizar(ValidacionRol $request, $id)
     {
-        return redirect('admin/menu/crear')->with('mensaje','Menú actualizado con exito');
+        Rol::findOrFail($id)->update($request->all());
+        return redirect('admin/rol')->with('mensaje', 'Rol actualizado con exito');
     }
-
     /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function eliminar($id)
-    {
-        //
-    }
-
-    public function guardarOrden(Request $request)
+    public function eliminar(Request $request, $id)
     {
         if ($request->ajax()) {
-            $menu = new Menu;
-            $menu->guardarOrden($request->menu);
-            return response()->json(['respuesta' => 'ok']);
+            if (Rol::destroy($id)) {
+                return response()->json(['mensaje' => 'ok']);
+            } else {
+                return response()->json(['mensaje' => 'ng']);
+            }
         } else {
             abort(404);
         }

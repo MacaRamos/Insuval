@@ -10,13 +10,13 @@ var Insuval = function () {
                 focusInvalid: false, // do not focus the last invalid input
                 ignore: "", // validate all fields including form hidden input
                 highlight: function (element, errorClass, validClass) { // hightlight error inputs
-                    $(element).closest('.form-group').addClass('has_error'); // set error class to the control group
+                    $(element).closest('.form-control').addClass('is-invalid'); // set error class to the control control
                 },
                 unhighlight: function (element) { // revert the change done by hightlight
-                    $(element).closest('.form-group').removeClass('has_error'); // set error class to the control group
+                    $(element).closest('.form-control').removeClass('is-invalid'); // set error class to the control control
                 },
                 success: function (label) {
-                    label.closest('.form-group').removeClass('has_error'); // set success class to the control group
+                    label.closest('.form-control').removeClass('is-invalid'); // set success class to the control control
                 },
                 errorPlacement: function (error, element) {
                     if ($(element).is('select') && element.hasClass('bs-select')) {//PARA LOS SELECT BOOSTRAP

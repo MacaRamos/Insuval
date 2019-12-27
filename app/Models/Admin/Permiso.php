@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Permiso extends Model
 {
-    protected $dateFormat = 'y-m-d h:i:s';
-    protected $table = 'permiso';
+    protected $dateFormat = 'Y-d-m H:i:s.v';
+    protected $table = 'Permiso';
+    protected $primaryKey = 'Per_codigo';
 }

@@ -14,7 +14,10 @@
     <div class="form-group row">
         <label for="Men_icono" class="col-lg-3 col-form-label">icono</label>
         <div class="col-lg-8">
-        <input type="text" name="Men_icono" class="form-control" id="Men_icono" value="{{old('Men_icono')}}" required/>
+        <input type="text" name="Men_icono" class="form-control" id="Men_icono" value="{{old('Men_icono')}}" >
+        </div>
+        <div class="col-lg-1">
+            <i id="mostrar-icono" class="{{old("icono")}} pt-2"></i>
         </div>
     </div>
 
