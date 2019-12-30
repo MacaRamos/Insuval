@@ -36,3 +36,7 @@ Route::group(['prefix' => 'recetarioMagistral', 'namespace' => 'RecetarioMagistr
     Route::get('receta/crear', 'RecetaController@crear')->name('crear_receta');
     //Route::get('admin/permiso', 'Admin\PermisoController@index')->name('permiso');
 });
+Route::group(['prefix' => 'sic', 'namespace' => 'SIC'], function(){
+    Route::get('sic', 'ADSICTRXController@index')->name('sic');
+    //Route::get('admin/permiso', 'Admin\PermisoController@index')->name('permiso');
+});
