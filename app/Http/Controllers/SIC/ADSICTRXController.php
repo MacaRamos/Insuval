@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SIC;
 
 use App\Http\Controllers\Controller;
 use App\Models\Articulos\ARTMAEST;
+use App\Models\dbFinanzas\AUXILI;
 use App\Models\SIC\ADSICLIN;
 use App\Models\SIC\ADSICTRX;
 use Illuminate\Http\Request;
@@ -17,17 +18,18 @@ class ADSICTRXController extends Controller
      */
     public function index()
     {
-        $sics = ADSICTRX::where('Mb_Epr_cod','=','INS')
-                ->where('SicTip','=',2)
+    
+        $sics = ADSICTRX::find
                 ->where('SicAut','=','S')
                 ->where('Proc_id','=','C')
                 ->with('lineasSIC')
+                ->with('lineasSIC.articulo')
+                ->with('cliente')
+                ->with('paciente')
                 ->get();
         
-        foreach($sics as $sic){
-            dd($sic->SicLin);
-        }
-        //return view('sic.index', compact('sics', 'lineas'));
+
+        return view('sic.index', compact('sics'));
     }
 
     /**

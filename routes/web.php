@@ -33,7 +33,8 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function(){
 });
 Route::group(['prefix' => 'recetarioMagistral', 'namespace' => 'RecetarioMagistral'], function(){
     Route::get('receta', 'RecetaController@index')->name('receta');
-    Route::get('receta/crear', 'RecetaController@crear')->name('crear_receta');
+    Route::get('receta/{SicFol}/{SicLin}/crear', 'RecetaController@crear')->name('crear_receta');
+    Route::post('receta', 'RecetaController@guardar')->name('guardar_receta');
     //Route::get('admin/permiso', 'Admin\PermisoController@index')->name('permiso');
 });
 Route::group(['prefix' => 'sic', 'namespace' => 'SIC'], function(){

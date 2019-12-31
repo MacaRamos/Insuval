@@ -4,6 +4,8 @@ namespace App\Http\Controllers\RecetarioMagistral;
 
 use App\Http\Controllers\Controller;
 use App\Models\RecetarioMagistral\Receta;
+use Illuminate\Database\Eloquent\Builder;
+use App\Models\SIC\ADSICTRX;
 use Illuminate\Http\Request;
 
 class RecetaController extends Controller
@@ -24,9 +26,18 @@ class RecetaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function crear($SicFol, $SicLin)
     {
-        //
+        $sic = ADSICTRX::where('Mb_Epr_cod','=','INS')
+                ->where('SicTip','=',2)
+                ->Where('SicFol','=',$SicFol)
+                ->with(["lineasSIC" => function($q){
+                    $q->where('SicLin', '=', 3);
+                }, 'lineasSIC.articulo'])
+                ->with('cliente')
+                ->with('paciente')
+                ->first();
+        return view('recetarioMagistral.crear', compact('sic'));
     }
 
     /**
@@ -35,7 +46,7 @@ class RecetaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function guardar(Request $request)
     {
         //
     }
@@ -46,7 +57,7 @@ class RecetaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function mostrar($id)
     {
         //
     }
@@ -57,7 +68,7 @@ class RecetaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function editar($id)
     {
         //
     }
@@ -69,7 +80,7 @@ class RecetaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function actualizar(Request $request, $id)
     {
         //
     }
@@ -80,7 +91,7 @@ class RecetaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function eliminar($id)
     {
         //
     }

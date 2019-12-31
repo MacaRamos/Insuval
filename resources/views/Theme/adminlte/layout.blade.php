@@ -30,6 +30,7 @@
         <link rel="stylesheet" href="{{asset("assets/css/custom.css")}}">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
         <script src="https://kit.fontawesome.com/7379ba20a1.js" crossorigin="anonymous"></script>
+        @yield('header')
         @yield('styles')
     </head>
 
