@@ -1,15 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\SIC;
+namespace App\Http\Controllers\Paciente;
 
 use App\Http\Controllers\Controller;
-use App\Models\Articulos\ARTMAEST;
-use App\Models\dbFinanzas\AUXILI;
-use App\Models\SIC\ADSICLIN;
-use App\Models\SIC\ADSICTRX;
+use App\Models\Paciente\Paciente;
 use Illuminate\Http\Request;
 
-class ADSICTRXController extends Controller
+class PacienteController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,20 +15,10 @@ class ADSICTRXController extends Controller
      */
     public function index()
     {
-    
-        $sics = ADSICTRX::where('Mb_Epr_cod','=','INS')
-                ->where('SicTip','=',2)
-                ->where('SicAut','=','S')
-                ->where('Proc_id','=','C')
-                ->with('lineasSIC')
-                ->with('lineasSIC.articulo')
-                ->with('cliente')
-                ->with('paciente')
-                ->get();
-        
-
-        return view('sic.index', compact('sics'));
+        //
     }
+
+   
 
     /**
      * Show the form for creating a new resource.

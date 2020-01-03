@@ -73,3 +73,15 @@ label.requerido:after{
 .tag-warning{
     background-color: #f39c12;
 }
+body{
+    font-size: 10pt;
+}
+
+.form-control:disabled, .form-control[readonly]{
+    background-color: #dcdcdc;
+}
+.table td, .table th {
+    padding: .5rem;
+    vertical-align: middle;
+    border-top: 1px solid #dee2e6 !important;
+}

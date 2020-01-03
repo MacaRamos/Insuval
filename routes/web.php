@@ -11,6 +11,7 @@
 |
 */
 
+
 Route::get('/', 'InicioController@index');
 Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function(){
     Route::get('permiso', 'PermisoController@index')->name('permiso');
@@ -35,9 +36,22 @@ Route::group(['prefix' => 'recetarioMagistral', 'namespace' => 'RecetarioMagistr
     Route::get('receta', 'RecetaController@index')->name('receta');
     Route::get('receta/{SicFol}/{SicLin}/crear', 'RecetaController@crear')->name('crear_receta');
     Route::post('receta', 'RecetaController@guardar')->name('guardar_receta');
-    //Route::get('admin/permiso', 'Admin\PermisoController@index')->name('permiso');
+
+
+    Route::get('buscarPaciente', 'RecetaController@buscarPaciente')->name('buscarPaciente');  
+    Route::get('buscarPrescriptor', 'RecetaController@buscarPrescriptor')->name('buscarPrescriptor');
+    Route::get('buscarEnvase', 'RecetaController@buscarEnvase')->name('buscarEnvase');
+    Route::get('buscarFormaFarmaceutica', 'RecetaController@buscarFormaFarmaceutica')->name('buscarFormaFarmaceutica');
+    Route::get('buscarPrincipioActivo', 'RecetaController@buscarPrincipioActivo')->name('buscarPrincipioActivo');
 });
+
+
 Route::group(['prefix' => 'sic', 'namespace' => 'SIC'], function(){
     Route::get('sic', 'ADSICTRXController@index')->name('sic');
+    //Route::get('admin/permiso', 'Admin\PermisoController@index')->name('permiso');
+});
+
+Route::group(['prefix' => 'paciente', 'namespace' => 'Paciente'], function(){
+    Route::get('paciente', 'PacienteController@index')->name('paciente');
     //Route::get('admin/permiso', 'Admin\PermisoController@index')->name('permiso');
 });

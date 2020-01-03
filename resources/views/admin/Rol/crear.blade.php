@@ -1,6 +1,6 @@
 @extends("theme.$theme.layout")
 @section('titulo')
-    Crear Rol
+Crear Rol
 @endsection
 
 @section('scripts')
@@ -17,15 +17,16 @@
                 <h3 class="card-title">Crear Rol</h3>
                 <div class="card-tools pull-right">
                     <a href="{{route('rol')}}" class="btn btn-block btn-info btn-sm ">
-                        <i class="fas fa-reply"></i> Volver a Roles 
+                        <i class="fas fa-reply"></i> Volver a Roles
                     </a>
                 </div>
             </div>
             <!-- form start -->
-            <form action="{{route('guardar_rol')}}" id="form-general" class="form-horizontal" method="POST" autocomplete="off">
+            <form action="{{route('guardar_rol')}}" id="form-general" class="form-horizontal" method="POST"
+                autocomplete="off">
                 @csrf
                 <div class="card-body">
-                 @include('admin.rol.form')
+                    @include('admin.rol.form')
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
@@ -36,10 +37,10 @@
                                 @include('includes.boton-form-crear')
                             </div>
                         </div>
-                    </div>    
+                    </div>
                 </div>
                 <!-- /.card-footer -->
-              </form>
+            </form>
         </div>
     </div>
 </div>

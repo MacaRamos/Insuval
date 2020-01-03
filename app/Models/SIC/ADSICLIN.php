@@ -3,6 +3,7 @@
 namespace App\Models\SIC;
 
 use App\Models\Articulos\ARTMAEST;
+use App\Models\Formulacion\ARTFORMU;
 use Illuminate\Database\Eloquent\Model;
 use LaravelTreats\Model\Traits\HasCompositePrimaryKey;
 use Awobaz\Compoships\Compoships;
@@ -20,5 +21,10 @@ class ADSICLIN extends Model
     public function articulo()
     {
         return $this->hasOne(ARTMAEST::class, ['Mb_Epr_cod', 'Art_cod'], ['Mb_Epr_cod', 'Art_cod']);
+    }
+
+    public function formulacion()
+    {
+        return $this->hasMany(ARTFORMU::class, ['Mb_Epr_cod', 'Gc_art1'], ['Mb_Epr_cod', 'Art_cod']);
     }
 }
