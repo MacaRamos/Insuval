@@ -3,16 +3,16 @@
         <!-- Modo preparación -->
         <div class="col-lg-4">
             <div class="form-group">
-                <label for="Tipo">Tipo</label>
-                <input type="text" class="form-control" name="Tipo" id="Tipo" value="{{old('Tipo')}}">
+                <label for="Rec_detalleTipo">Tipo</label>
+                <input type="text" class="form-control" name="Rec_detalleTipo" id="Rec_detalleTipo" value="{{old('Rec_detalleTipo')}}">
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-lg-12">
             <div class="form-group">
-                <label for="caracteristicas-organolepticas">Características Organolépticas</label>
-                <textarea class="form-control" rows="3" value="{{old('caracteristicas-organolepticas')}}"></textarea>
+                <label for="Rec_organolepticas">Características Organolépticas</label>
+                <textarea class="form-control" rows="3" name="Rec_organolepticas" id="Rec_organolepticas" value="{{old('Rec_organolepticas')}}"></textarea>
             </div>
         </div>
         <!-- /Modo preparación -->
@@ -30,7 +30,7 @@
                     @foreach ($precauciones as $precaucion)
                     <li>
                         <label style="font-weight: 400;">
-                            <input type="checkbox"> {{$precaucion->Cau_descripcion}}
+                            <input type="checkbox" name="precauciones[]" value="{{$precaucion->Cau_codigo}}"> {{$precaucion->Cau_descripcion}}
                         </label>
                     </li>
                     @endforeach
@@ -49,7 +49,7 @@
                     @foreach ($equipos as $equipo)
                     <li>
                         <label style="font-weight: 400;">
-                            <input type="checkbox"> {{$equipo->Equ_nombre}}
+                            <input type="checkbox" name="equipos[]" value="{{$equipo->Equ_codigo}}"> {{$equipo->Equ_nombre}}
                         </label>
                     </li>
                     @endforeach

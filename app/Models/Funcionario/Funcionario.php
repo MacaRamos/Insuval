@@ -11,9 +11,4 @@ class Funcionario extends Model
     protected $table = "Funcionario";
     protected $guarded = ['Fun_rut'];
     protected $primaryKey = 'Fun_rut';
-
-    public function asistentes()
-    {
-        return $this->belongsToMany(Receta::class, 'recetaasistente', ['Rec_codigo','Mb_Epr_cod'], 'Fun_Rut');
-    }
 }

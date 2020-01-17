@@ -12,8 +12,12 @@
 */
 
 
-Route::get('/', 'InicioController@index');
-Route::group(['prefix' => 'admin', 'namespace' => 'Admin'], function(){
+Route::get('/', 'InicioController@index')->name('inicio');
+Route::get('seguridad/login', 'Seguridad\LoginController@index')->name('login');
+Route::post('seguridad/login', 'Seguridad\LoginController@login')->name('login_post');
+Route::get('seguridad/logout', 'Seguridad\LoginController@logout')->name('logout');
+Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['auth','superadmin']], function(){
+    route::get('','AdminController@index');
     Route::get('permiso', 'PermisoController@index')->name('permiso');
     Route::get('permiso/crear', 'PermisoController@crear')->name('crear_permiso');
     /*RUTAS DEL MENU*/
@@ -36,9 +40,14 @@ Route::group(['prefix' => 'recetarioMagistral', 'namespace' => 'RecetarioMagistr
     Route::get('receta', 'RecetaController@index')->name('receta');
     Route::get('receta/{SicFol}/{SicLin}/crear', 'RecetaController@crear')->name('crear_receta');
     Route::post('receta', 'RecetaController@guardar')->name('guardar_receta');
+    Route::get('receta/{Rec_codigo}/{Rec_fechaVencimiento}/{button}', 'RecetaController@altaCalidad')->name('altaCalidad_receta');
+    /* RUTAS FACTURA */
+    Route::get('factura/', 'FacturaController@index')->name('factura');
+    Route::get('factura/{SicFol}', 'FacturaController@facturar')->name('facturar');
 
 
-    Route::get('buscarPaciente', 'RecetaController@buscarPaciente')->name('buscarPaciente');  
+    Route::get('buscarPaciente', 'RecetaController@buscarPaciente')->name('buscarPaciente');
+    Route::get('buscarCliente', 'RecetaController@buscarCliente')->name('buscarCliente');
     Route::get('buscarPrescriptor', 'RecetaController@buscarPrescriptor')->name('buscarPrescriptor');
     Route::get('buscarEnvase', 'RecetaController@buscarEnvase')->name('buscarEnvase');
     Route::get('buscarFormaFarmaceutica', 'RecetaController@buscarFormaFarmaceutica')->name('buscarFormaFarmaceutica');

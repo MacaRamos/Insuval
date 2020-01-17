@@ -4,6 +4,7 @@ namespace App\Models\SIC;
 
 use App\Models\Articulos\ARTMAEST;
 use App\Models\Formulacion\ARTFORMU;
+use App\Models\MovimientoInventario\EXISTOCK;
 use Illuminate\Database\Eloquent\Model;
 use LaravelTreats\Model\Traits\HasCompositePrimaryKey;
 use Awobaz\Compoships\Compoships;
@@ -17,6 +18,7 @@ class ADSICLIN extends Model
     protected $table = "super_gc.ADSICLIN";
     protected $guarded = ['Mb_Epr_cod','SicTip', 'SicFol', 'SicLin'];
     protected $primaryKey = ['Mb_Epr_cod', 'SicTip', 'SicFol', 'SicLin'];
+    public $timestamps = false;
 
     public function articulo()
     {
@@ -26,5 +28,10 @@ class ADSICLIN extends Model
     public function formulacion()
     {
         return $this->hasMany(ARTFORMU::class, ['Mb_Epr_cod', 'Gc_art1'], ['Mb_Epr_cod', 'Art_cod']);
+    }
+
+    public function stock()
+    {
+        return $this->hasOne(EXISTOCK::class, ['Mb_Epr_cod', 'Ex_art_cod'], ['Mb_Epr_cod', 'Art_cod']);
     }
 }

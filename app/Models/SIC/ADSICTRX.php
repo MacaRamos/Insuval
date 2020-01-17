@@ -2,7 +2,9 @@
 
 namespace App\Models\SIC;
 
+use App\Models\Cliente\CLIDEFIN;
 use App\Models\dbFinanzas\AUXILI;
+use App\Models\dbFinanzas\DIRECC;
 use App\Models\Paciente\Paciente;
 use Illuminate\Database\Eloquent\Model;
 use LaravelTreats\Model\Traits\HasCompositePrimaryKey;
@@ -17,6 +19,7 @@ class ADSICTRX extends Model
     protected $table = "super_gc.ADSICTRX";
     protected $guarded = ['Mb_Epr_cod','SicTip', 'SicFol'];
     protected $primaryKey = ['Mb_Epr_cod', 'SicTip', 'SicFol'];
+    public $timestamps = false;
 
     public function lineasSIC()
     {
@@ -28,10 +31,19 @@ class ADSICTRX extends Model
         return $this->hasOne(AUXILI::class, 'Mb_Cod_aux', 'Ve_Cod_Cli');
     }
 
+    public function clidefin()
+    {
+        return $this->hasOne(CLIDEFIN::class, ['Mb_Epr_cod', 'Ve_Cod_Cli'], ['Mb_Epr_cod','Ve_Cod_Cli']);
+    }
+
     public function paciente()
     {
         return $this->hasOne(Paciente::class, 'PacID', 'Ve_cod_pac');
-    }
+    }    
     
+    public function direccion()
+    {
+        return $this->hasOne(DIRECC::class, ['Mb_Cod_Aux', 'Mb_cor_dir'], ['Ve_Cod_Cli', 'Sicdircli']);
+    }
 }
 

@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Menu extends Model
 {
-    protected $dateFormat = 'Y-d-m H:i:s.v';
     protected $table = "Menu";
     protected $fillable = ['Men_nombre', 'Men_url', 'Men_icono'];
     protected $guarded = ['Men_id'];
@@ -14,10 +13,8 @@ class Menu extends Model
 
     public function roles()
     {
-        //belongsToMany(string $related, string $table = null, string $foreignKey = null, string $otherKey = null, string $relation = null)
         return $this->belongsToMany(Rol::class, 'MenuRol', 'Men_id', 'Rol_codigo');
     }
-
     public function getHijos($padres, $line)
     {
         $children = [];
@@ -32,7 +29,7 @@ class Menu extends Model
     {
         if ($front) {
             return $this->whereHas('roles', function ($query) {
-                $query->where('Rol_codigo', session()->get('Rol_codigo'))->orderby('Men_codigo');
+                $query->where('Rol.Rol_codigo', session()->get('Rol_codigo'));
             })->orderby('Men_codigo')
                 ->orderby('Men_orden')
                 ->get()
@@ -57,31 +54,32 @@ class Menu extends Model
         }
         return $menuAll;
     }
-    
     public function guardarOrden($menu)
     {
         $menus = json_decode($menu);
+
+        dd($menu);
         foreach ($menus as $var => $value) {
-            $this->where('Men_id', $value->id)->update(['Men_codigo' => 0, 'Men_orden' => $var + 1]);            
+            $this->where('Men_id', $value->Men_id)->update(['Men_codigo' => 0, 'Men_orden' => $var + 1]);
             if (!empty($value->children)) {
                 foreach ($value->children as $key => $vchild) {
-                    $update_id = $vchild->id;
-                    $parent_id = $value->id;
+                    $update_id = $vchild->Men_id;
+                    $parent_id = $value->Men_id;
                     $this->where('Men_id', $update_id)->update(['Men_codigo' => $parent_id, 'Men_orden' => $key + 1]);
                     if (!empty($vchild->children)) {
                         foreach ($vchild->children as $key => $vchild1) {
-                            $update_id = $vchild1->id;
-                            $parent_id = $vchild->id;
+                            $update_id = $vchild1->Men_id;
+                            $parent_id = $vchild->Men_id;
                             $this->where('Men_id', $update_id)->update(['Men_codigo' => $parent_id, 'Men_orden' => $key + 1]);
                             if (!empty($vchild1->children)) {
                                 foreach ($vchild1->children as $key => $vchild2) {
-                                    $update_id = $vchild2->id;
-                                    $parent_id = $vchild1->id;
+                                    $update_id = $vchild2->Men_id;
+                                    $parent_id = $vchild1->Men_id;
                                     $this->where('Men_id', $update_id)->update(['Men_codigo' => $parent_id, 'Men_orden' => $key + 1]);
                                     if (!empty($vchild2->children)) {
                                         foreach ($vchild2->children as $key => $vchild3) {
-                                            $update_id = $vchild3->id;
-                                            $parent_id = $vchild2->id;
+                                            $update_id = $vchild3->Men_id;
+                                            $parent_id = $vchild2->Men_id;
                                             $this->where('Men_id', $update_id)->update(['Men_codigo' => $parent_id, 'Men_orden' => $key + 1]);
                                         }
                                     }

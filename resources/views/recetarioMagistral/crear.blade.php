@@ -58,21 +58,37 @@ Receta
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <!-- MDB core JavaScript -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.10.1/js/mdb.min.js"></script>
-<script>
-    $(function () {
-        //Date range as a button
-    $('#Rec_fechaVencimiento-btn').daterangepicker(
+<script type="text/javascript">
+    $(document).ready(function(){
+        var vencimientos = @json($vencimientos);
+        var start = moment().subtract(1, 'days');
+        var end = moment();
+
+    function mostrarFecha(start, end) {
+        $('#Rec_fechaPreparacion').val(start.format('DD/MM/YYYY'));
+        $('#Rec_fechaVencimiento').val(end.format('DD/MM/YYYY'));
+    }
+
+    var fechas = {};
+ 
+    $.each(vencimientos,function(key, vencimiento){
+        if(vencimiento.Ven_tipo === 'Días '){
+            fechas[vencimiento.Ven_cantidad+' '+vencimiento.Ven_tipo] = [moment(), moment().add(vencimiento.Ven_cantidad, 'days')];
+        }
+        if(vencimiento.Ven_tipo === 'Meses'){
+            fechas[vencimiento.Ven_cantidad+' '+vencimiento.Ven_tipo] = [moment(), moment().add(vencimiento.Ven_cantidad, 'month')];
+        }
+        if(vencimiento.Ven_tipo === 'años'){
+            fechas[vencimiento.Ven_cantidad+' '+vencimiento.Ven_tipo] = [moment(), moment().add(vencimiento.Ven_cantidad, 'year')];
+        }
+    });
+
+   
+    $('#validez-btn').daterangepicker(
       {
-        ranges   : {
-          'Today'       : [moment(), moment()],
-          'Yesterday'   : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-          'Last 7 Days' : [moment().subtract(6, 'days'), moment()],
-          'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-          'This Month'  : [moment().startOf('month'), moment().endOf('month')],
-          'Last Month'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-        },
-        startDate: moment().startOf('day'),
-        endDate: moment().startOf('day').add(35, 'day'),
+        ranges   : fechas,
+        startDate: start,
+        endDate  : end,
         locale: {
                 "format": "DD/MM/YYYY",
                 "separator": " - ",
@@ -80,7 +96,7 @@ Receta
                 "cancelLabel": "Cancelar",
                 "fromLabel": "Desde",
                 "toLabel": "Hasta",
-                "customRangeLabel": "Custom",
+                "customRangeLabel": "Manual",
                 "daysOfWeek": [
                     "Do",
                     "Lu",
@@ -107,15 +123,14 @@ Receta
                 "firstDay": 1
             }
       },
-      function (start, end) {
-        $('#Rec_fechaVencimiento').val(start.format('DD/MM/YYYY') + ' - ' + end.format('DD/MM/YYYY'))
-      }
-    )
-})
+      mostrarFecha
+    );
+    mostrarFecha(start, end);
+});
 </script>
 <script>
     $(function() {
-    $( "#Paciente" ).autocomplete({
+    $("#PacNom").autocomplete({
         source: function(request, response) {
             $.ajax({
                 url: "{{route('buscarPaciente')}}",
@@ -125,15 +140,49 @@ Receta
                 dataType: "json",
                 success: function(data){
                     var resp = $.map(data,function(Paciente){
-                        return Paciente.PacNom;
+                        return  {
+                                label: Paciente.PacNom,
+                                id: Paciente.PacID
+                            };
                     }); 
                     response(resp);
                 }
             });
         },
+        select: function (event, ui) {
+            $("#PacNom").val(ui.item.label); // display the selected text
+            $("#PacID").val(ui.item.id); // save selected id to hidden input
+        },
         minLength: 1
     });
-    $( "#Prescriptor" ).autocomplete({
+
+    $("#Mb_Razon_a").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "{{route('buscarCliente')}}",
+                data: {
+                    term : request.term
+                },
+                dataType: "json",
+                success: function(data){
+                    var resp = $.map(data,function(Cliente){
+                        return {
+                                label: Cliente.Mb_Razon_a,
+                                id: Cliente.Mb_Cod_aux
+                            };
+                    }); 
+                    response(resp);
+                }
+            });
+        },
+        select: function (event, ui) {
+            $("#Mb_Razon_a").val(ui.item.label); // display the selected text
+            $("#Mb_Cod_aux").val(ui.item.id); // save selected id to hidden input
+        },
+        minLength: 1
+    });
+
+    $("#NomPre").autocomplete({
         source: function(request, response) {
             $.ajax({
                 url: "{{route('buscarPrescriptor')}}",
@@ -143,15 +192,23 @@ Receta
                 dataType: "json",
                 success: function(data){
                     var resp = $.map(data,function(Prescriptor){
-                        return Prescriptor.NomPre;
+                        return {
+                                label: Prescriptor.NomPre,
+                                id: Prescriptor.IdPre
+                            };
                     }); 
                     response(resp);
                 }
             });
         },
+        select: function (event, ui) {
+            $("#NomPre").val(ui.item.label); // display the selected text
+            $("#IdPre").val(ui.item.id); // save selected id to hidden input
+        },
         minLength: 1
     });
-    $( "#Envase" ).autocomplete({
+
+    $("#Env_descripcion").autocomplete({
         source: function(request, response) {
             $.ajax({
                 url: "{{route('buscarEnvase')}}",
@@ -161,15 +218,22 @@ Receta
                 dataType: "json",
                 success: function(data){
                     var resp = $.map(data,function(Envase){
-                        return Envase.Env_descripcion;
+                        return {
+                                label: Envase.Env_descripcion,
+                                id: Envase.Env_codigo
+                            };
                     }); 
                     response(resp);
                 }
             });
         },
+        select: function (event, ui) {
+            $("#Env_descripcion").val(ui.item.label); // display the selected text
+            $("#Env_codigo").val(ui.item.id); // save selected id to hidden input
+        },
         minLength: 1
     });
-    $( "#forma-farmaceutica" ).autocomplete({
+    $("#Pre_descripcion").autocomplete({
         source: function(request, response) {
             $.ajax({
                 url: "{{route('buscarFormaFarmaceutica')}}",
@@ -179,15 +243,22 @@ Receta
                 dataType: "json",
                 success: function(data){
                     var resp = $.map(data,function(FormaFarmaceutica){
-                        return FormaFarmaceutica.Pre_descripcion;
+                        return {
+                                label: FormaFarmaceutica.Pre_descripcion,
+                                id: FormaFarmaceutica.Pre_codigo
+                            };
                     }); 
                     response(resp);
                 }
             });
         },
+        select: function (event, ui) {
+            $("#Pre_descripcion").val(ui.item.label); // display the selected text
+            $("#Pre_codigo").val(ui.item.id); // save selected id to hidden input
+        },
         minLength: 1
     });
-    $( "#principio-activo" ).autocomplete({
+    $("#NombrePrincipio").autocomplete({
         source: function(request, response) {
             $.ajax({
                 url: "{{route('buscarPrincipioActivo')}}",
@@ -197,11 +268,18 @@ Receta
                 dataType: "json",
                 success: function(data){
                     var resp = $.map(data,function(PrincipioActivo){
-                        return PrincipioActivo.Art_nom_ex;
+                        return {
+                                label: PrincipioActivo.Art_nom_ex,
+                                id: PrincipioActivo.Art_nom_cod
+                            };
                     }); 
                     response(resp);
                 }
             });
+        },
+        select: function (event, ui) {
+            $("#NombrePrincipio").val(ui.item.label); // display the selected text
+            $("#PrincipioActivo").val(ui.item.id); // save selected id to hidden input
         },
         minLength: 1
     });
@@ -239,7 +317,7 @@ Receta
 });
 </script>
 <script>
-$(".checkbox-menu").on("change", "input[type='checkbox']", function() {
+    $(".checkbox-menu").on("change", "input[type='checkbox']", function() {
    $(this).closest("li").toggleClass("active", this.checked);
 });
 
@@ -330,7 +408,7 @@ $BTN.on('click', () => {
 </script>
 <script>
     function autocompletarComponente(){
-    $(".componente" ).autocomplete({
+    $(".componente").autocomplete({
         source: function(request, response) {
             $.ajax({
                 url: "{{route('buscarPrincipioActivo')}}",
@@ -358,68 +436,59 @@ autocompletarComponente();
     <div class="col-lg-12">
         @include('includes.error-form')
         @include('includes.mensaje')
-        <div class="card border-top border-light mt-2">
-            <div class="card-header  border-bottom border-info with-border">
-                <h3 class="card-title">Crear Receta</h3>
-                <div class="card-tools pull-right">
-                    <a href="{{route('sic')}}" class="btn btn-block btn-info btn-sm">
-                        <i class="fas fa-reply"></i> Volver a Selección de SIC
-                    </a>
+        <form action="{{route('guardar_receta')}}" id="form-general" class="form-horizontal" method="POST"
+            autocomplete="off">
+            @csrf
+            <div class="card mt-2">
+                <div class="card-header card-header border-bottom-3 border-info">
+                    <h3 class="card-title text-info font-weight-bold mt-1">Crear Receta</h3>
+                    <div class="card-tools pull-right">
+                        <a href="{{route('sic')}}" class="btn btn-block btn-info btn-sm">
+                            <i class="fas fa-reply"></i> Volver a Selección de SIC
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <form action="{{route('guardar_receta')}}" id="form-general" class="form-horizontal" method="POST" autocomplete="off">
-                @csrf
                 <div class="card-body">
                     @include('recetarioMagistral.form')
                 </div>
-                <div class="card-footer">
-                    <div class="row">
-                        <div class="col-lg-8 mx-auto">
-                            @include('includes.boton-form-crear')
-                
+            </div>
+            <div class="row">
+                <!-- DETALLE RECETA -->
+                <div class="col-lg-12">
+                    <div class="card mt-2">
+                        <div class="card-header card-header border-bottom-3 border-info">
+                            <h3 class="card-title text-info font-weight-bold mt-1">Formulación</h3>
+                        </div>
+                        <div class="card-body">
+                            @include('recetarioMagistral.form-formulacion')
                         </div>
                     </div>
                 </div>
-                <!-- /.card-footer -->
-            </form>
-        </div>
+                <!-- /DETALLE RECETA -->
+            </div>
+            <div class="row">
+                <!-- DETALLE ADICIONAL -->
+                <div class="col-lg-12">
+                    <div class="card border-top border-light mt-2">
+                        <div class="card-header card-header border-bottom-3 border-info">
+                            <h3 class="card-title text-info font-weight-bold mt-1">Detalles Adicionales</h3>
+                        </div>
+                        <div class="card-body">
+                            @include('recetarioMagistral.form-detalleAdicional')
+                        </div>
+                    </div>
+                </div>
+                <!-- /DETALLE ADICIONAL -->
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-lg-8 mx-auto">
+                        @include('includes.boton-form-crear')
+                    </div>
+                </div>
+            </div>
+            <!-- /.card-footer -->
+        </form>
     </div>
 </div>
-{{-- <div class="row">
-    <!-- DETALLE RECETA -->
-    <div class="col-lg-12">
-        <div class="card border-top border-light mt-2">
-            <div class="card-header  border-bottom border-info with-border">
-                <h3 class="card-title">Formulación</h3>
-            </div>
-            <form action="{{route('guardar_receta')}}" id="form-general" class="form-horizontal" method="POST"
-                autocomplete="off">
-                @csrf @method("put")
-                <div class="card-body">
-                    @include('recetarioMagistral.form-formulacion')
-                </div>
-            </form>
-        </div>
-    </div>
-    <!-- /DETALLE RECETA -->
-</div>
-<div class="row">
-    <!-- DETALLE ADICIONAL -->
-    <div class="col-lg-12">
-        <div class="card border-top border-light mt-2">
-            <div class="card-header  border-bottom border-info with-border">
-                <h3 class="card-title">Detalles Adicionales</h3>
-            </div>
-            <form action="{{route('guardar_receta')}}" id="form-general" class="form-horizontal" method="POST"
-                autocomplete="off">
-                @csrf @method("put")
-                <div class="card-body">
-                    @include('recetarioMagistral.form-detalleAdicional')
-                </div>
-            </form>
-        </div>
-    </div>
-    <!-- /DETALLE ADICIONAL -->
-</div> --}}
-
 @endsection

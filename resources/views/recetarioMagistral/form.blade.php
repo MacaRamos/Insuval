@@ -17,21 +17,23 @@
         </div>
         <div class="col-lg-2">
             <div class="form-group">
-                <label for="numero_receta">Nª Receta</label>
-                <input type="text" name="Rec_codigo" id="numero_receta" class="form-control" placeholder=""
-                    value="{{$receta->Id_RM}}" disabled>
+                <label for="Receta" class="requerido">Nª Receta</label>
+                <input type="text" name="Rec_codigo" id="Rec_codigo" class="form-control" value="{{$receta->Id_RM}}"
+                    readonly="readonly" />
             </div>
         </div>
         <div class="col-lg-8">
             <div class="form-group">
-                <label for="Rec_fechaVencimiento">Fecha Elaboración - Vencimiento:</label>
+                <label for="Rec_fechaVencimiento" class="requerido">Fecha Elaboración - Vencimiento:</label>
                 <div class="input-group">
-                    <button type="button" class="btn btn-default float-right" id="Rec_fechaVencimiento-btn">
+                    <button type="button" class="btn btn-default float-right" id="validez-btn">
                         <i class="far fa-calendar-alt"></i> Duración
                         <i class="fas fa-caret-down"></i>
                     </button>
-                    <input type="text" class="form-control float-right" name="Rec_fechaVencimientov"
-                        id="Rec_fechaVencimiento">
+                    <input type="text" class="form-control" name="Rec_fechaPreparacion"
+                        id="Rec_fechaPreparacion" required />
+                    <input type="text" class="form-control" name="Rec_fechaVencimiento"
+                        id="Rec_fechaVencimiento" required />
                 </div>
             </div>
         </div>
@@ -41,15 +43,17 @@
         <!-- SIC y numero O/C -->
         <div class="col-lg-4">
             <div class="form-group">
-                <label for="SicFol">SIC</label>
-                <input type="text" class="form-control" name="SicFol" id="SicFol" value="{{$sic->SicFol}}" disabled>
+                <label for="SicFol" class="requerido">SIC</label>
+                <input type="text" class="form-control" name="SicFol" id="SicFol" value="{{$sic->SicFol}}" readonly="readonly"
+                    required />
+                    <input type="hidden" class="form-control" name="SicLin" id="SicLin" value="{{$sic->lineasSIC[0]->SicLin}}"/>
             </div>
         </div>
         <div class="col-lg-4">
             <div class="form-group">
-                <label for="SicPOnro">N° O/C</label>
+                <label for="SicPOnro" class="requerido">N° O/C</label>
                 <input type="text" class="form-control" name="SicPOnro" id="SicPOnro" value="{{$sic->SicPOnro}}"
-                    disabled>
+                    readonly="readonly" required />
             </div>
         </div>
         <!-- SIC y numero O/C -->
@@ -59,23 +63,26 @@
         <div class="col-lg-4">
             @csrf
             <div class="form-group ">
-                <label for="Paciente">Paciente</label>
-                <input type="text" class="form-control" name="Paciente" id="Paciente"
-                    value="{{$sic->paciente->PacNom}}">
+                <label for="Paciente" class="requerido">Paciente</label>
+                <input type="hidden" class="form-control" name="PacID" id="PacID" value="{{$sic->paciente->PacID}}">
+                <input type="text" class="form-control" name="PacNom" id="PacNom" value="{{$sic->paciente->PacNom}}"
+                    required />
             </div>
         </div>
         <div class="col-lg-4">
             <div class="form-group">
-                <label for="Cliente">Cliente</label>
-                <input type="text" class="form-control" name="Cliente" id="Cliente"
-                    value="{{$sic->cliente->Mb_Razon_a}}">
+                <label for="Cliente" class="requerido">Cliente</label>
+                <input type="hidden" class="form-control" name="Mb_Cod_aux" id="Mb_Cod_aux"
+                    value="{{$sic->cliente->Mb_Cod_aux}}">
+                <input type="text" class="form-control" name="Mb_Razon_a" id="Mb_Razon_a"
+                    value="{{$sic->cliente->Mb_Razon_a}}" required />
             </div>
         </div>
         <div class="col-lg-4">
             <div class="form-group">
-                <label for="Prescriptor">Prescriptor</label>
-                <input type="text" class="form-control" name="Prescriptor" id="Prescriptor"
-                    value="{{old('Prescriptor')}}">
+                <label for="Prescriptor" class="requerido">Prescriptor</label>
+                <input type="hidden" class="form-control" name="IdPre" id="IdPre" value="{{old('IdPre')}}">
+                <input type="text" class="form-control" name="NomPre" id="NomPre" value="{{old('NomPre')}}" required />
             </div>
         </div>
         <!-- /Paciente, Cliente y Prescriptor -->
@@ -84,22 +91,26 @@
         <!-- Envase, Forma Farmacéutica y Cant. Preparado -->
         <div class="col-lg-4">
             <div class="form-group">
-                <label for="Envase">Envase</label>
-                <input type="text" class="typeahead form-control" name="Envase" id="Envase" value="{{old('Envase')}}">
+                <label for="Envase" class="requerido">Envase</label>
+                <input type="hidden" class="typeahead form-control" name="Env_codigo" id="Env_codigo"
+                    value="{{old('Env_codigo')}}">
+                <input type="text" class="typeahead form-control" name="Env_descripcion" id="Env_descripcion"
+                    value="{{old('Env_descripcion')}}" required />
             </div>
         </div>
         <div class="col-lg-4">
             <div class="form-group">
-                <label for="forma-farmaceutica">Forma Farmacéutica</label>
-                <input type="text" class="form-control" name="forma-farmaceutica" id="forma-farmaceutica"
-                    value="{{old('forma-farmaceutica')}}">
+                <label for="forma-farmaceutica" class="requerido">Forma Farmacéutica</label>
+                <input type="hidden" class="form-control" name="Pre_codigo" id="Pre_codigo">
+                <input type="text" class="form-control" name="Pre_descripcion" id="Pre_descripcion"
+                    value="{{old('Pre_descripcion')}}" required />
             </div>
         </div>
         <div class="col-lg-4">
             <div class="form-group">
-                <label for="cant-preparado">Cant. Preparado</label>
-                <input type="text" class="form-control" name="cant-preparado" id="cant-preparado"
-                    value="{{old('cant-preparado')}}">
+                <label for="Rec_cantidad" class="requerido">Cant. Preparado</label>
+                <input type="text" class="form-control" name="Rec_cantidad" id="Rec_cantidad"
+                    value="{{old('Rec_cantidad')}}" required />
             </div>
         </div>
         <!-- /Envase, Forma Farmacéutica y Cant. Preparado -->
@@ -108,22 +119,25 @@
         <!-- Principio Activo, Unidades y Indicación -->
         <div class="col-lg-4">
             <div class="form-group">
-                <label for="principio-activo">Principio Activo</label>
-                <input type="text" class="form-control" name="principio-activo" id="principio-activo"
-                    value="{{$sic->lineasSIC[0]->articulo->Art_nom_ex}}">
+                <label for="PrincipioActivo" class="requerido">Principio Activo</label>
+                <input type="hidden" class="form-control" name="PrincipioActivo" id="PrincipioActivo"
+                    value="{{$sic->lineasSIC[0]->articulo->Art_cod}}">
+                <input type="text" class="form-control" name="NombrePrincipio" id="NombrePrincipio"
+                    value="{{$sic->lineasSIC[0]->articulo->Art_nom_ex}}" required />
             </div>
         </div>
         <div class="col-lg-4">
             <div class="form-group">
-                <label for="Unidades">Unidades</label>
-                <input type="number" class="form-control" name="Unidades" id="Unidades"
-                    value="{{round($sic->lineasSIC[0]->SicArtCan, 0)}}">
+                <label for="Rec_unidades" class="requerido">Unidades</label>
+                <input type="number" class="form-control" name="Rec_unidades" id="Rec_unidades"
+                    value="{{round($sic->lineasSIC[0]->SicArtCan, 0)}}" required />
             </div>
         </div>
         <div class="col-lg-4">
             <div class="form-group">
-                <label for="Indicación">Indicación</label>
-                <input type="text" class="form-control" name="Indicación" id="Indicación" value="{{old('Indicación')}}">
+                <label for="Rec_indicacion" class="requerido">Indicación</label>
+                <input type="text" class="form-control" name="Rec_indicacion" id="Rec_indicacion"
+                    value="{{old('Rec_indicacion')}}" required />
             </div>
         </div>
         <!-- /Principio Activo, Unidades y Indicación -->
@@ -132,16 +146,20 @@
         <!-- Funcionarios -->
         <div class="col-lg-4">
             <div class="form-group">
-                <label for="Fun_rut">Operador</label>
-                <select class="form-control" name='Operador'>
+                <label for="Fun_quimico" class="requerido">Operador</label>
+                <select class="form-control" name='Fun_quimico'>
                     @foreach ($operadores as $operador)
-                    <option>{{$operador->Fun_nombre}}</option>
+                    @if ($operador->Fun_tipo == 'DT')
+                    <option selected="true" value="{{$operador->Fun_rut}}">{{$operador->Fun_nombre}}</option>
+                    @else
+                    <option value="{{$operador->Fun_rut}}">{{$operador->Fun_nombre}}</option>
+                    @endif
                     @endforeach
                 </select>
             </div>
         </div>
         <div class="col-lg-4">
-            <label for="Asistente">Asistentes</label>
+            <label for="Asistente" class="requerido">Asistentes</label>
             <div class="dropdown">
                 <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="true">
@@ -152,7 +170,8 @@
                     @foreach ($asistentes as $asistente)
                     <li>
                         <label style="font-weight: 400;">
-                            <input type="checkbox" > {{$asistente->Fun_nombre}}
+                            <input type="checkbox" name='asistentes[]' value="{{$asistente->Fun_rut}}">
+                            {{$asistente->Fun_nombre}}
                         </label>
                     </li>
                     @endforeach
@@ -165,8 +184,8 @@
         <!-- Modo preparación -->
         <div class="col-lg-12">
             <div class="form-group">
-                <label for="modo-preparacion">Modo preparación</label>
-                <textarea class="form-control" rows="3" value="{{old('modo-preparacion')}}"></textarea>
+                <label for="Rec_modoPreparacion">Modo preparación</label>
+                <textarea class="form-control" rows="7" cols="100" name="Rec_modoPreparacion" value="{{$sic->lineasSIC[0]->articulo->art_receta}}">{{trim($sic->lineasSIC[0]->articulo->art_receta)}}</textarea>
             </div>
         </div>
         <!-- /Modo preparación -->
