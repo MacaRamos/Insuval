@@ -5,14 +5,14 @@ SIC
 @section('contenido')
 <div class="row">
     <div class="col-lg-12">
-        <div class="card card-info mt-2">
-            <div class="card-header">
-                <h3 class="card-title">Seleccione SIC</h3>
-            </div>
+        @section('tituloContenido')
+        <h1>Seleccione SIC</h1>
+        @endsection
+        <div class="card mt-2">
             <!-- /.card-header -->
             <div class="card-body table-responsive p-0">
                 <table class="table table-bordered table-hover">
-                    <thead>
+                    <thead class="border-bottom-3 border-info">
                         <tr>
                             <th style="width: 100px;"></th>
                             <th>Folio</th>
