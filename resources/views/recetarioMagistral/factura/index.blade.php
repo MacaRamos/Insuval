@@ -8,22 +8,24 @@ Recetas
 @endsection
 @section('contenido')
 
-<div class="row my-5">
+<div class="col-lg-12">
     @include('includes.mensaje')
+</div>
+<div class="row my-5">
     <!-- SIC y numero O/C -->
     <div class="col-lg-9">
     </div>
     <div class="col-lg-3">
-            <form class="form-horizontal">
-                <div class="form-group row">
-                    <label for="SicPOnro" class="col-lg-2 col-form-label">Buscar</label>
-                    <div class="input-group col-lg-10">
-                        <input type="text" class="form-control" name="buscarpor" id="buscarpor"
-                            placeholder="O/C o Folio" />
-                        <button type="submit" class="btn btn-info">Buscar</button>
-                    </div>
+        <form class="form-horizontal">
+            <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Buscar</label>
+                <div class="input-group col-lg-10">
+                    <input type="text" class="form-control" name="buscarpor" id="buscarpor"
+                        value="{{$request->buscarpor}}" placeholder="Buscar" autocomplete="off"/>
+                    <button type="submit" class="btn btn-info">Buscar</button>
                 </div>
-            </form>
+            </div>
+        </form>
     </div>
     <!-- SIC y numero O/C -->
 </div>

@@ -10,4 +10,5 @@ class Paciente extends Model
     protected $table = "Pacientes";
     protected $guarded = ['PacID','PacRUT', 'PacDV'];
     protected $primaryKey = 'PacID';
+    public $timestamps = false;
 }

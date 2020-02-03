@@ -27,6 +27,7 @@ use App\Models\RecetarioMagistral\IDRECETA;
 use App\Models\RecetarioMagistral\Receta;
 use App\Models\SIC\ADSICTRX;
 use App\Models\Vencimiento\Vencimiento;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
 class RecetaController extends Controller
@@ -37,7 +38,7 @@ class RecetaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($tipo)
     {
         $recetas = Receta::orderBy('Rec_codigo')
             ->with(['lineasReceta', 'lineasReceta.articulo'])
@@ -49,7 +50,7 @@ class RecetaController extends Controller
             ->get();
 
         //dd($recetas);
-        return view('recetarioMagistral.index', compact('recetas'));
+        return view('recetarioMagistral.index', compact('recetas', 'tipo'));
     }
 
     /**
@@ -219,6 +220,7 @@ class RecetaController extends Controller
         $receta->Est_codigo = 1;
         $receta->Rec_alta = 'N';
         $receta->Rec_calidad = 'N';
+        $receta->Ven_codigo = $request->Ven_codigo;
         $receta->save();
 
         if (is_null($request->item) == false) {
@@ -267,32 +269,37 @@ class RecetaController extends Controller
 
         $SicLin = $request->SicLin;
         $sic = ADSICTRX::where('Mb_Epr_cod', '=', $this->Emp)
-                        ->where('SicTip', '=', 2)
-                        ->Where('SicFol', '=', $request->SicFol)
-                        ->with(["lineasSIC" => function ($q) use ($SicLin) {
-                            $q->where('SicLin', '=', $SicLin);
-                        }])
-                        ->first();
-        
+            ->where('SicTip', '=', 2)
+            ->Where('SicFol', '=', $request->SicFol)
+            ->with(["lineasSIC" => function ($q) use ($SicLin) {
+                $q->where('SicLin', '=', $SicLin);
+            }])
+            ->first();
+
         $sic->lineasSIC[0]->LineReady = 1;
         $sic->lineasSIC[0]->update();
         $lineas = ADSICTRX::where('Mb_Epr_cod', '=', $this->Emp)
-                        ->where('SicTip', '=', 2)
-                        ->Where('SicFol', '=', $request->SicFol)
-                        ->with("lineasSIC")
-                        ->first();
+            ->where('SicTip', '=', 2)
+            ->Where('SicFol', '=', $request->SicFol)
+            ->with("lineasSIC")
+            ->first();
         $lineasListas = true;
-        foreach ($lineas->lineasSIC as $linea){
-            if ($linea->LineReady != 1){
+        foreach ($lineas->lineasSIC as $linea) {
+            if ($linea->LineReady != 1) {
                 $lineasListas = false;
             }
         }
-        if ($lineasListas){
+        if ($lineasListas) {
             $sic->Proc_id = 'D';
             $sic->update();
         }
+        $notificacion = array(
+            'mensaje' => 'Receta creada con éxito',
+            'tipo' => 'success',
+            'titulo' => 'Receta'
+        );
 
-        return redirect('recetarioMagistral/receta')->with('mensaje', 'Receta creada con éxito');
+        return redirect('recetarioMagistral/receta')->with($notificacion);
     }
 
     /**
@@ -309,7 +316,7 @@ class RecetaController extends Controller
             return redirect('recetarioMagistral/receta')->with('mensaje', 'Receta dada de alta con éxito');
         }
         if ($button == 'calidad') {
-            
+
             $cod_mov = 'I15';
             $registrosI15 = $this->movimientoI15($Rec_codigo, $Rec_fechaVencimiento, $cod_mov);
 
@@ -564,7 +571,7 @@ class RecetaController extends Controller
     }
 
     private function actualizarLote($registrosD1)
-    { //Actualiza stock lote (Rec_codigo)        
+    { //Actualiza stock lote (Rec_codigo)
         $existock = EXISTOCK::where('Mb_Epr_cod', '=', $this->Emp)
             ->where('Ex_art_cod', '=', $registrosD1[1]->Art_cod)
             ->where('Ex_bod_cod', '=', $registrosD1[1]->BOD_EXIS)
@@ -576,33 +583,33 @@ class RecetaController extends Controller
             $existock->Ex_art_Ftr = date("d/m/Y");
             $existock->Ex_art_hor = date("H:i:s");
             $existock->Stock_actu = $existock->Stock_actu - $registrosD1[1]->MOV_ART_CA;
-                if ($registrosD1[1]->articulo()->first()->Art_ind_se == 'S') {//Rebaja Lote
-                    $existkxl = EXISTKXL::where('Mb_Epr_cod', '=', $this->Emp)
-                        ->where('Ex_bod_cod', '=', $registrosD1[1]->BOD_EXIS)
-                        ->where('Ex_art_cod', '=', $registrosD1[1]->Art_cod)
-                        ->where('Ex_nro_lot', '=', $registrosD1[1]->art_lote)
-                        ->where('Ex_prv_cod', '=', 99)
-                        ->first();
-                    if ($existkxl) {
-                        $existkxl->Ex_lot_cst = $registrosD1[1]->MOV_ART_VA;
-                        $existkxl->Ex_lot_fec = $registrosD1[1]->Art_Fec_Vc;
-                        $existkxl->Ex_lot_can = $existkxl->Ex_lot_can - $registrosD1[1]->MOV_ART_CA;
-                        $existkxl->update();
-                    } else {
-                        $existkxl = new EXISTKXL;
-                        $existkxl->Mb_Epr_cod = $this->Emp;
-                        $existkxl->Ex_bod_cod = $registrosD1[1]->BOD_EXIS;
-                        $existkxl->Ex_art_cod = $registrosD1[1]->Art_cod;
-                        $existkxl->Ex_nro_lot = $registrosD1[1]->art_lote;
-                        $existkxl->Ex_prv_cod = 99;
-                        $existkxl->Ex_lot_cst = $registrosD1[1]->MOV_ART_VA;
-                        $existkxl->Ex_lot_fec = $registrosD1[1]->Art_Fec_Vc;
-                        $existkxl->Ex_lot_can = $registrosD1[1]->MOV_ART_CA*-1;
-                        $existkxl->save();
-                    }
+            if ($registrosD1[1]->articulo()->first()->Art_ind_se == 'S') { //Rebaja Lote
+                $existkxl = EXISTKXL::where('Mb_Epr_cod', '=', $this->Emp)
+                    ->where('Ex_bod_cod', '=', $registrosD1[1]->BOD_EXIS)
+                    ->where('Ex_art_cod', '=', $registrosD1[1]->Art_cod)
+                    ->where('Ex_nro_lot', '=', $registrosD1[1]->art_lote)
+                    ->where('Ex_prv_cod', '=', 99)
+                    ->first();
+                if ($existkxl) {
+                    $existkxl->Ex_lot_cst = $registrosD1[1]->MOV_ART_VA;
+                    $existkxl->Ex_lot_fec = $registrosD1[1]->Art_Fec_Vc;
+                    $existkxl->Ex_lot_can = $existkxl->Ex_lot_can - $registrosD1[1]->MOV_ART_CA;
+                    $existkxl->update();
+                } else {
+                    $existkxl = new EXISTKXL;
+                    $existkxl->Mb_Epr_cod = $this->Emp;
+                    $existkxl->Ex_bod_cod = $registrosD1[1]->BOD_EXIS;
+                    $existkxl->Ex_art_cod = $registrosD1[1]->Art_cod;
+                    $existkxl->Ex_nro_lot = $registrosD1[1]->art_lote;
+                    $existkxl->Ex_prv_cod = 99;
+                    $existkxl->Ex_lot_cst = $registrosD1[1]->MOV_ART_VA;
+                    $existkxl->Ex_lot_fec = $registrosD1[1]->Art_Fec_Vc;
+                    $existkxl->Ex_lot_can = $registrosD1[1]->MOV_ART_CA * -1;
+                    $existkxl->save();
                 }
+            }
             $existock->update();
-        }else {
+        } else {
             $existock = new EXISTOCK;
             $existock->Mb_Epr_cod = $this->Emp;
             $existock->Ex_art_cod = $registrosD1[1]->Art_cod;
@@ -612,15 +619,16 @@ class RecetaController extends Controller
             $existock->Ex_art_hor = date("H:i:s");
             $existock->Ex_art_cau = $registrosD1[1]->Ex_mov_cod;
             $existock->Ex_art_trx = $registrosD1[1]->MOV_FOLIO;
-            $existock->Stock_actu = $registrosD1[1]->MOV_ART_CA*-1;
+            $existock->Stock_actu = $registrosD1[1]->MOV_ART_CA * -1;
 
             $existock->save();
         }
         $registrosD1[0]->EX_ESTDOC = 'C';
         $registrosD1[0]->update();
     }
-    
-    private function rebajandoMateriales($registrosI15, $receta){
+
+    private function rebajandoMateriales($registrosI15, $receta)
+    {
         $cod_mov = 'D15';
         $Mov_serie = $this->obtenerFolio($cod_mov);
         $existrxc = new EXISTRXC;
@@ -640,51 +648,189 @@ class RecetaController extends Controller
         $existrxc->EX_INDANUL = 'N';
         $existrxc->Mov_gd_fol = $registrosI15[0]->EX_NRODOCT;
         $existrxc->EX_SEDE = $registrosI15[0]->EX_SEDE;
-        $existrxc->EX_BODSEDE = 5;//&BodegaOrigen
+        $existrxc->EX_BODSEDE = 5; //&BodegaOrigen
         $existrxc->ex_trx_hor = date("H:i:s");
         $existrxc->ex_trx_fec = date("d/m/Y");
         $existrxc->ex_trx_utr = session()->get('Usu_usuario');
-        $existrxc->save();       
+        $existrxc->save();
 
-        foreach($receta[0]->formulacion as $key => $item){
+        foreach ($receta[0]->formulacion as $key => $item) {
             $cantidad = $registrosI15[1]->MOV_ART_CA * $item->Gc_cant;
             $existock = EXISTOCK::where('Mb_Epr_cod', '=', $this->Emp)
-                            ->where('Ex_art_cod', '=', $item->Gc_art2)
-                            ->where('Ex_bod_cod', '=', $registrosI15[0]->EX_BODSEDE)
-                            ->where('Ex_ubi_cod', '=', 'EXI')
-                            ->first();
-            
-            if($existock){
+                ->where('Ex_art_cod', '=', $item->Gc_art2)
+                ->where('Ex_bod_cod', '=', $registrosI15[0]->EX_BODSEDE)
+                ->where('Ex_ubi_cod', '=', 'EXI')
+                ->first();
+
+            if ($existock) {
                 $existock->Stock_actu = $existock->Stock_actu - $cantidad;
                 $existock->update();
-            }else{
+            } else {
                 $existock = new EXISTOCK;
                 $existock->Mb_Epr_cod = $this->Emp;
-                $existock->Ex_bod_cod = $registrosI15[0]->EX_BODSEDE;               //bodega por defecto de la transaccion
-                $existock->Ex_ubi_cod = 'EXI' ;                     //ubicacion por defecto de la bodega ventas
+                $existock->Ex_bod_cod = $registrosI15[0]->EX_BODSEDE; //bodega por defecto de la transaccion
+                $existock->Ex_ubi_cod = 'EXI'; //ubicacion por defecto de la bodega ventas
                 $existock->Ex_art_cod = $existock->Gc_art2;
                 $existock->Stock_actu = $cantidad * -1;
                 $existock->save();
             }
             $existrxl = new EXISTRXL;
             $existrxl->Mb_Epr_cod = $this->Emp;
-		    $existrxl->MOV_FOLIO = $Mov_serie;
-		    $existrxl->Ex_mov_cod = 'D15';
-		    $existrxl->EX_LINEA = $key + 1;
-		    $existrxl->Art_cod = $item->Gc_art2;
-		    $existrxl->MOV_ART_CA = $cantidad;
-		    $existrxl->MOV_ART_VA = $item->Gc_for_cst;//Traer de EXISSTOCK   REVISAR
-		    $existrxl->mov_art_tc = $existrxl->MOV_ART_CA * $existrxl->MOV_ART_VA;
-		    $existrxl->MOV_ART_UM = 'UN';
-		    $existrxl->BOD_EXIS = $registrosI15[0]->EX_BODSEDE;
-		    $existrxl->Mov_ubi_co = 'EXI';
-		    $existrxl->Ex_art_bar = $registrosI15[1]->Art_cod;
+            $existrxl->MOV_FOLIO = $Mov_serie;
+            $existrxl->Ex_mov_cod = 'D15';
+            $existrxl->EX_LINEA = $key + 1;
+            $existrxl->Art_cod = $item->Gc_art2;
+            $existrxl->MOV_ART_CA = $cantidad;
+            $existrxl->MOV_ART_VA = $item->Gc_for_cst; //Traer de EXISSTOCK   REVISAR
+            $existrxl->mov_art_tc = $existrxl->MOV_ART_CA * $existrxl->MOV_ART_VA;
+            $existrxl->MOV_ART_UM = 'UN';
+            $existrxl->BOD_EXIS = $registrosI15[0]->EX_BODSEDE;
+            $existrxl->Mov_ubi_co = 'EXI';
+            $existrxl->Ex_art_bar = $registrosI15[1]->Art_cod;
             $existrxl->mov_art_de = $registrosI15[1]->articulo()->first()->Art_nom_ex;
             $existrxl->save();
         }
         $existrxc->EX_ESTDOC = 'C';
         $existrxc->update();
+
+    }
+
+    public function imprimirEtiqueta($Rec_codigo, $button)
+    {
+        $receta = Receta::where('Rec_codigo', '=', $Rec_codigo)
+            ->where('Mb_Epr_cod', '=', $this->Emp)
+            ->with('paciente', 'prescriptor', 
+                'formaFarmaceutica', 'operador', 
+                'precauciones.precaucion', 'sic', 
+                'vencimiento', 'formulacion',
+                'formulacion.nombreFormulacion',
+                'asistentes', 'asistentes.funcionario')
+            ->first();
+
+        $asistentes = array();
+        foreach ($receta->asistentes as $asistente){
+            $nombreAsistente = $asistente->funcionario->Fun_nombre;
+            $nombreAsistente = explode(" ", $nombreAsistente);
+            $apellidoAsistente = $asistente->funcionario->Fun_apellido;
+            $apellidoAsistente = explode(" ", $apellidoAsistente);
+            $nombreCompleto = $nombreAsistente[0] . ' ' . $apellidoAsistente[0];
+            array_push($asistentes, $nombreCompleto);
+        }
+        $asistentes = implode(", ", $asistentes);
         
+        $ditec = Funcionario::where('Fun_tipo', '=', 'DT')->first();
+
+        $nombreDitec = trim(strtoupper($ditec->Fun_nombre));
+        $nombreDitec = explode(" ", $nombreDitec);
+        $apellidoDitec = trim(strtoupper($ditec->Fun_apellido));
+        $apellidoDitec = explode(" ", $apellidoDitec);
+        $ditec = $nombreDitec[0] . ' ' . $apellidoDitec[0] . ' ' . substr($apellidoDitec[1], 0, 1) . '.';
+
+        $nombreOperador = trim(strtoupper($receta->operador->Fun_nombre));
+        $nombreOperador = explode(" ", $nombreOperador);
+        $apellidoOperador = trim(strtoupper($receta->operador->Fun_apellido));
+        $apellidoOperador = explode(" ", $apellidoOperador);
+        $operador = $nombreOperador[0] . ' ' . $apellidoOperador[0] . ' ' . substr($apellidoOperador[1], 0, 1) . '.';
+
+        if ($button == 'imprimir') {
+            $precauciones = array();
+            foreach ($receta->precauciones as $item) {
+                array_push($precauciones, trim($item->precaucion[0]->Cau_descripcion));
+            }
+            $precauciones = implode(",", $precauciones);
+            
+            $xml = '<?xml version="1.0" encoding="UTF-8"?>
+            <etiqueta>
+                <encabezado>
+                    <paciente>' . trim(strtoupper($receta->paciente->PacNom)) . '</paciente>
+                    <prescriptor>' . trim(strtoupper($receta->prescriptor->NomPre)) . '</prescriptor>
+                </encabezado>
+                <cuerpo>
+                    <indicacion>' . trim(strtoupper($receta->Rec_indicacion)) . '</indicacion>
+                    <cantidad>' . $receta->Rec_cantidad . ' ' . trim($receta->formaFarmaceutica->Pre_unidadMedida) . '</cantidad>
+                    <principioactivo>' . trim(strtoupper($receta->NombrePrincipio)) . '</principioactivo>
+                    <fechapreparacion>' . date('d-m-Y', strtotime($receta->Rec_fechaPreparacion)) . '</fechapreparacion>
+                    <fechavencimiento>' . date('d-m-Y', strtotime($receta->Rec_fechaVencimiento)) . '</fechavencimiento>
+                    <directortecnico>' . $operador . '</directortecnico>
+                    <precauciones>' . $precauciones . '</precauciones>
+                    <numeroreceta>' . trim($receta->Rec_codigo) . '</numeroreceta>
+                </cuerpo>
+            </etiqueta>';
+
+            $textoXML = mb_convert_encoding($xml, "UTF-8");
+
+            $client = new Client();
+
+            // &HTTPClient.Host = 'leviatan-01'
+            // &HTTPClient.Port = 80
+            $url = "http://leviatan-01/InsuvalLabelService/json.rpc";
+
+            $response = $client->request('POST', $url, [
+                'headers' => ['content-type' => 'application/json-rpc'],
+                'json' => ['method' => 'print.printLabel',
+                    'params' => [
+                        'ZDesigner GT800 (EPL)',
+                        'recetariomagistral.pml',
+                        base64_encode($textoXML),
+                    ]],
+            ]);
+
+            $code = $response->getStatusCode();
+            if ($code == 200) {
+                //tuvo una respuesta positiva del servidor, ahora hay que revisar si se imprimio o no
+                return redirect('recetarioMagistral/receta')->with('mensaje', 'La etiqueta se ha impreso correctamente');
+            } else {
+                //respuesta negativa
+                //error 500: un error inesperado que ha provocado que el servicio se bugee
+                //error 404: la url está incorrecta
+                //otros errores: ni idea
+                return redirect('recetarioMagistral/receta')->with('mensaje', $response);
+            }
+        }
+        if ($button == 'reporte') {
+            //dd($receta);
+            $pdf = \PDF::loadView('reportes.reporteReceta', compact('receta', 'ditec', 'operador', 'asistentes'));
+            return $pdf->stream();
+        }
+    }
+
+    public function libroPreparaciones(Request $request){
+        $fechaInicio = explode(' - ', $request->rangoFecha)[0];
+        $fechaTermino = explode(' - ', $request->rangoFecha)[1];
+
+        $recetas = Receta::where('Mb_Epr_cod', '=', $this->Emp)
+                         ->where('Rec_fechaPreparacion', '>=', $fechaInicio)
+                         ->where('Rec_fechaPreparacion', '<=', $fechaTermino)
+                         ->with('paciente', 'prescriptor', 
+                         'formaFarmaceutica', 'operador', 
+                         'precauciones.precaucion', 'sic', 
+                         'vencimiento', 'formulacion',
+                         'formulacion.nombreFormulacion',
+                         'asistentes', 'asistentes.funcionario')
+                         ->get();
+        
+        $pdf = \PDF::loadView('reportes.libroPreparaciones', compact('recetas'));
+        return $pdf->stream();
+    }
+
+    public function libroRecetas(Request $request){
+        $fechaInicio = explode(' - ', $request->rangoFecha)[0];
+        $fechaTermino = explode(' - ', $request->rangoFecha)[1];
+
+        $recetas = Receta::where('Mb_Epr_cod', '=', $this->Emp)
+                         ->where('Rec_fechaPreparacion', '>=', $fechaInicio)
+                         ->where('Rec_fechaPreparacion', '<=', $fechaTermino)
+                         ->with(['lineasReceta', 'lineasReceta.articulo'])
+                         ->with('paciente', 'prescriptor', 
+                         'formaFarmaceutica', 'operador', 
+                         'precauciones.precaucion', 'sic', 
+                         'vencimiento', 'formulacion',
+                         'formulacion.nombreFormulacion',
+                         'asistentes', 'asistentes.funcionario')
+                         ->get();
+
+        $pdf = \PDF::loadView('reportes.libroRecetas', compact('recetas'))->setOrientation('landscape');
+        return $pdf->stream();
     }
     /**
      * Display the specified resource.
@@ -710,8 +856,7 @@ class RecetaController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
+     *     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */

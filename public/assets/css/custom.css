@@ -35,7 +35,7 @@ label.requerido:after{
     line-height: 25px !important;
 }
 .icon-circle:hover{
-    background-color: #17a2b8;
+    filter: brightness(0.8);
     border-top-left-radius: 25px;
     border-top-right-radius: 25px;
     border-bottom-right-radius: 25px;
@@ -141,4 +141,35 @@ li.user-header{
 }
 .btn-salir:hover{
     color: #333;
+}
+
+.table-pdf{
+    border:1px solid rgb(70, 70, 77) !important;
+    margin-top:20px;
+  }
+.table-pdf > thead > tr > th{
+    border:1px solid rgb(70, 70, 77) !important;
+}
+.table-pdf > tbody > tr > td{
+    border:1px solid rgb(70, 70, 77) !important;
+    padding: 0;
+}
+.bg-gris-claro{
+    background-color: #cfcfcf;
+}
+.hover-default:hover{
+    background-color: #dadada;
+}
+.table-border-none > thead > tr > th{
+    border: none !important;
+}
+.table-border-none > tbody > tr > td{
+    border: none !important;
+}
+.page-item.active .page-link{
+    background-color:  #17a2b8!important;
+    border-color: #17a2b8!important;
+}
+.pagination > li > a{
+    color: #17a2b8!important;
 }

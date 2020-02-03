@@ -35,7 +35,12 @@ class RolController extends Controller
     public function guardar(ValidacionRol $request)
     {
         Rol::create($request->all());
-        return redirect('admin/rol')->with('mensaje', 'Rol creado con exito');
+        $notificacion = array(
+            'mensaje' => 'Rol creado con exitoo',
+            'tipo' => 'success',
+            'titulo' => 'Rol'
+        );
+        return redirect('admin/rol')->with($notificacion);
     }
     /**
      * Show the form for editing the specified resource.
@@ -58,7 +63,13 @@ class RolController extends Controller
     public function actualizar(ValidacionRol $request, $id)
     {
         Rol::findOrFail($id)->update($request->all());
-        return redirect('admin/rol')->with('mensaje', 'Rol actualizado con exito');
+
+        $notificacion = array(
+            'mensaje' => 'Rol actualizado con éxito',
+            'tipo' => 'success',
+            'titulo' => 'Rol'
+        );
+        return redirect('admin/rol')->with($notificacion);
     }
     /**
      * Remove the specified resource from storage.

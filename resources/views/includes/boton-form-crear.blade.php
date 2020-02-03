@@ -1,2 +1,2 @@
 <button type="submit" class="btn btn-info">Guardar</button>
-<button type="reset" class="btn btn-default">Cancelar</button>
+<a href="{{URL::previous()}}" type="reset" class="btn btn-default">Cancelar</a>

@@ -11,8 +11,13 @@ class RECETAPRECAUCION extends Model
     use HasCompositePrimaryKey;
     use Compoships;
     protected $dateFormat = 'Y-d-m H:i:s.v';
-    protected $table = "RECETAPRECAUCION";
+    protected $table = "RecetaPrecaucion";
     protected $guarded = ['Rec_codigo', 'Mb_Epr_cod','Cau_codigo'];
     protected $primaryKey = ['Rec_codigo', 'Mb_Epr_cod','Cau_codigo'];
     public $timestamps = false;
+
+    public function precaucion()
+    {
+        return $this->hasMany(Precaucion::class, 'Cau_codigo', 'Cau_codigo');
+    }
 }

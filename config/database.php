@@ -104,6 +104,18 @@ return [
             'prefix_indexes' => true,
         ],
 
+        'DATA_SII' => [
+            'driver' => 'sqlsrv',
+            'url' => env('DATABASE_URL'),
+            'host' => env('DATA_SII_HOST', 'localhost'),
+            'port' => env('DATA_SII_PORT', '1433'),
+            'database' => env('DATA_SII_DATABASE', 'forge'),
+            'username' => env('DATA_SII_USERNAME', 'forge'),
+            'password' => env('DATA_SII_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+        ],
     ],
 
     /*

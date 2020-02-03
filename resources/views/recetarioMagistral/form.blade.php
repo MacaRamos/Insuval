@@ -34,6 +34,8 @@
                         id="Rec_fechaPreparacion" required />
                     <input type="text" class="form-control" name="Rec_fechaVencimiento"
                         id="Rec_fechaVencimiento" required />
+                        <input type="hidden" class="form-control" name="Ven_codigo"
+                        id="Ven_codigo" required />
                 </div>
             </div>
         </div>

@@ -15,4 +15,5 @@ class ARTMAEST extends Model
     protected $table = "super_gc.ARTMAEST";
     protected $guarded = ['Mb_Epr_cod','Art_cod'];
     protected $primaryKey = ['Mb_Epr_cod','Art_cod'];
+    public $timestamps = false;
 }

@@ -9,6 +9,7 @@ class Equipo extends Model
 {
     protected $dateFormat = 'Y-d-m H:i:s.v';
     protected $table = "Equipo";
-    protected $guarded = ['Equ_codigo'];
+    protected $guarded = ['Equ_codigo', 'Equ_nombre'];
     protected $primaryKey = 'Equ_codigo';
+    public $timestamps = false;
 }

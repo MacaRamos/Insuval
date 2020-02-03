@@ -10,4 +10,5 @@ class Preparacion extends Model
     protected $table = "Preparacion";
     protected $guarded = ['Pre_codigo'];
     protected $primaryKey = 'Pre_codigo';
+    public $timestamps = false;
 }

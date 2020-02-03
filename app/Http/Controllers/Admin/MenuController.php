@@ -59,9 +59,10 @@ class MenuController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function editar($id)
+    public function editar($Men_id)
     {
-        //
+        $data = Menu::findOrfail($Men_id);
+        return view('admin.menu.editar', compact('data'));
     }
 
     /**

@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 class InicioController extends Controller
 {
     /**
@@ -13,6 +11,10 @@ class InicioController extends Controller
      */
     public function index()
     {
-        return view('inicio');
+        if (session()->get('Rol_nombre')) {
+             return redirect()->route('sic');
+        }else{
+           return view('seguridad.index');
+        }
     }
 }

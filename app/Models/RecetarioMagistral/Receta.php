@@ -8,10 +8,13 @@ use App\Models\Estado\Estado;
 use App\Models\FormaFarmaceutica\Preparacion;
 use App\Models\Formulacion\ARTFORMU;
 use App\Models\Funcionario\Funcionario;
+use App\Models\Funcionario\RECETAASISTENTE;
 use App\Models\Paciente\Paciente;
 use App\Models\Precauciones\Precaucion;
+use App\Models\Precauciones\RECETAPRECAUCION;
 use App\Models\Prescriptor\AUXPRE;
 use App\Models\SIC\ADSICTRX;
+use App\Models\Vencimiento\Vencimiento;
 use Awobaz\Compoships\Compoships;
 use Illuminate\Database\Eloquent\Model;
 use LaravelTreats\Model\Traits\HasCompositePrimaryKey;
@@ -33,7 +36,7 @@ class Receta extends Model
 
     public function asistentes()
     {
-        return $this->belongsToMany(Funcionario::class, 'RecetaAsistente', ['Rec_codigo','Mb_Epr_cod'], 'Fun_Rut');
+        return $this->hasMany(RECETAASISTENTE::class, ['Rec_codigo', 'Mb_Epr_cod'], ['Rec_codigo', 'Mb_Epr_cod']);
     }
 
     public function equipo()
@@ -41,14 +44,19 @@ class Receta extends Model
         return $this->belongsToMany(Equipo::class, 'RecetaEquipo', ['Rec_codigo','Mb_Epr_cod'], 'Equ_codigo');
     }
 
-    public function precaucion()
+    public function precauciones()
     {
-        return $this->belongsToMany(Precaucion::class, 'RecetaPrecaucion', ['Rec_codigo','Mb_Epr_cod'], 'Cau_codigo');
+        return $this->hasMany(RECETAPRECAUCION::class, ['Rec_codigo', 'Mb_Epr_cod'], ['Rec_codigo', 'Mb_Epr_cod']);
     }
 
     public function cliente()
     {
         return $this->hasOne(AUXILI::class, 'Mb_Cod_aux', 'Cliente');
+    }
+
+    public function operador()
+    {
+        return $this->hasOne(Funcionario::class, 'Fun_rut', 'Fun_quimico');
     }
 
     public function formaFarmaceutica()
@@ -64,6 +72,10 @@ class Receta extends Model
     public function paciente()
     {
         return $this->hasOne(Paciente::class, 'PacID', 'PacID');
+    }
+    public function vencimiento()
+    {
+        return $this->hasOne(Vencimiento::class, 'Ven_codigo', 'Ven_codigo');
     }
 
     public function prescriptor()

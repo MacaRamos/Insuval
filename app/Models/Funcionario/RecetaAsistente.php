@@ -15,4 +15,9 @@ class RECETAASISTENTE extends Model
     protected $guarded = ['Rec_codigo', 'Mb_Epr_cod','Fun_rut'];
     protected $primaryKey = ['Rec_codigo', 'Mb_Epr_cod','Fun_rut'];
     public $timestamps = false;
+
+    public function funcionario()
+    {
+        return $this->hasOne(Funcionario::class, 'Fun_rut', 'Fun_rut');
+    }
 }

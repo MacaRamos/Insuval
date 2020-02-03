@@ -10,4 +10,5 @@ class Prescriptor extends Model
     protected $table = "Prescriptores";
     protected $guarded = ['PreID','PreRUT', 'PreDV'];
     protected $primaryKey = 'PreID';
+    public $timestamps = false;
 }

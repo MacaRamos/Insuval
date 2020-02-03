@@ -28,8 +28,6 @@ class ADSICTRXController extends Controller
                 ->with('cliente')
                 ->with('paciente')
                 ->get();
-        
-
         return view('sic.index', compact('sics'));
     }
 

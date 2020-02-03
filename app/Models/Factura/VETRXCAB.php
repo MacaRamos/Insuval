@@ -24,8 +24,7 @@ class VETRXCAB extends Model
     }
 
     public function direccion($Ve_Cod_Cli, $ve_trx_dfa)
-    {
-        // $direccion = DIRECC::where('Mb_Cod_Aux', '=', $this->Ve_Cod_Cli)->where('Mb_cor_dir', '=', $this->ve_trx_dfa)->first();
+    {        
         return DIRECC::where('Mb_Cod_Aux', '=', $Ve_Cod_Cli)->where('Mb_cor_dir', '=', $ve_trx_dfa)->first();
     }
 }

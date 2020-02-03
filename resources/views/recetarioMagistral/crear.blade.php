@@ -58,15 +58,18 @@ Receta
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <!-- MDB core JavaScript -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.10.1/js/mdb.min.js"></script>
+@include('includes.mensaje')
 <script type="text/javascript">
     $(document).ready(function(){
         var vencimientos = @json($vencimientos);
-        var start = moment().subtract(1, 'days');
-        var end = moment();
+        var Ven_codigo = vencimientos[0].Ven_codigo;
+        var start = moment();
+        var end =  moment().add(vencimientos[0].Ven_cantidad, 'days');
 
     function mostrarFecha(start, end) {
         $('#Rec_fechaPreparacion').val(start.format('DD/MM/YYYY'));
         $('#Rec_fechaVencimiento').val(end.format('DD/MM/YYYY'));
+        $('#Ven_codigo').val(Ven_codigo);
     }
 
     var fechas = {};
@@ -81,6 +84,7 @@ Receta
         if(vencimiento.Ven_tipo === 'años'){
             fechas[vencimiento.Ven_cantidad+' '+vencimiento.Ven_tipo] = [moment(), moment().add(vencimiento.Ven_cantidad, 'year')];
         }
+        Ven_codigo = vencimiento.Ven_codigo;
     });
 
    
@@ -89,6 +93,7 @@ Receta
         ranges   : fechas,
         startDate: start,
         endDate  : end,
+        minDate  : start,
         locale: {
                 "format": "DD/MM/YYYY",
                 "separator": " - ",
@@ -435,7 +440,6 @@ autocompletarComponente();
 <div class="row">
     <div class="col-lg-12">
         @include('includes.error-form')
-        @include('includes.mensaje')
         <form action="{{route('guardar_receta')}}" id="form-general" class="form-horizontal" method="POST"
             autocomplete="off">
             @csrf
