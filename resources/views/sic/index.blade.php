@@ -1,6 +1,6 @@
 @extends("theme.$theme.layout")
 @section('titulo')
-SIC
+SIC Hola coy un cambio
 @endsection
 @section('contenido')
 <div class="row">
