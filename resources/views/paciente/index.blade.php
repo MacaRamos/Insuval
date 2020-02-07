@@ -41,7 +41,6 @@ Paciente
           </div>
         </form>
       </div>
-      <!-- SIC y numero O/C -->
     </div>
     <div class="card mt-2">
       <!-- /.card-header -->

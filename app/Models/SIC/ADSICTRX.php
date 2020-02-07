@@ -5,6 +5,7 @@ namespace App\Models\SIC;
 use App\Models\Cliente\CLIDEFIN;
 use App\Models\dbFinanzas\AUXILI;
 use App\Models\dbFinanzas\DIRECC;
+use App\Models\Estapas\GCETAPAS;
 use App\Models\Paciente\Paciente;
 use Illuminate\Database\Eloquent\Model;
 use LaravelTreats\Model\Traits\HasCompositePrimaryKey;
@@ -20,10 +21,16 @@ class ADSICTRX extends Model
     protected $guarded = ['Mb_Epr_cod','SicTip', 'SicFol'];
     protected $primaryKey = ['Mb_Epr_cod', 'SicTip', 'SicFol'];
     public $timestamps = false;
+    public static $snakeAttributes = false;
 
     public function lineasSIC()
     {
         return $this->hasMany(ADSICLIN::class, ['Mb_Epr_cod', 'SicTip', 'SicFol'], ['Mb_Epr_cod', 'SicTip', 'SicFol']);
+    }
+
+    public function etapa()
+    {
+        return $this->hasOne(GCETAPAS::class, 'Proc_id', 'Proc_id');
     }
 
     public function cliente()

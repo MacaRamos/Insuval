@@ -60,18 +60,35 @@ Receta
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.10.1/js/mdb.min.js"></script>
 @include('includes.mensaje')
 <script type="text/javascript">
+function radioTipoRO(){
+    var vencimientos = @json($vencimientos);
+    var start = moment();
+    var end = moment().add(vencimientos[vencimientos.length-1].Ven_cantidad, 'days');
+    mostrarFecha(start, end, vencimientos[vencimientos.length-1].Ven_codigo);
+}
+function radioTipoRM(){
+    var vencimientos = @json($vencimientos);
+    var start = moment();
+    var end = moment().add(vencimientos[0].Ven_cantidad, 'days');
+    mostrarFecha(start, end, vencimientos[0].Ven_codigo);
+}
+function mostrarFecha(start, end, Ven_codigo) {
+    $('#Rec_fechaPreparacion').val(start.format('DD/MM/YYYY'));
+    $('#Rec_fechaVencimiento').val(end.format('DD/MM/YYYY'));
+    $('#Ven_codigo').val(Ven_codigo);
+}
     $(document).ready(function(){
+        var maximo = @json(round($sic->lineasSIC[0]->SicArtCan-$sic->lineasSIC[0]->SicCanDesp, 0));
+        $('#Rec_unidades').attr('max', maximo);
+        $('#Rec_indicacion').attr('maxlength', 40);
+
+
         var vencimientos = @json($vencimientos);
         var Ven_codigo = vencimientos[0].Ven_codigo;
         var start = moment();
         var end =  moment().add(vencimientos[0].Ven_cantidad, 'days');
-
-    function mostrarFecha(start, end) {
-        $('#Rec_fechaPreparacion').val(start.format('DD/MM/YYYY'));
-        $('#Rec_fechaVencimiento').val(end.format('DD/MM/YYYY'));
-        $('#Ven_codigo').val(Ven_codigo);
-    }
-
+    
+    mostrarFecha(start, end, Ven_codigo);
     var fechas = {};
  
     $.each(vencimientos,function(key, vencimiento){
@@ -130,7 +147,7 @@ Receta
       },
       mostrarFecha
     );
-    mostrarFecha(start, end);
+    mostrarFecha(start, end, Ven_codigo);
 });
 </script>
 <script>

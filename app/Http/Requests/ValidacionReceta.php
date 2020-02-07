@@ -33,21 +33,23 @@ class ValidacionReceta extends FormRequest
             'Pre_codigo' => 'required',
             'Rec_cantidad' => 'required',
             'PrincipioActivo' => 'required|max:15',
-            'Rec_unidades' => 'required'
+            'Rec_unidades' => 'required',
+            'Rec_indicacion' => 'max:40'
         ];
     }
-    public function messages()
+    public function attributes()
     {
         return [
-            'Rec_codigo.required' => 'Falta campo N° Receta, consulte a soporte',
-            'SicFol.required' => 'Falta campo Folio',
-            'PacID.required' => 'Falta campo Paciente',
-            'IdPre.required' => 'Falta campo Prescriptor',
-            'Mb_Cod_aux.required' => 'Falta campo Cliente',
-            'Env_codigo.required' => 'Falta campo Envase',
-            'Pre_codigo.required' => 'Falta campo Forma Farmacéutica',
-            'Rec_cantidad.required' => 'Falta campo cantidad',
-            'Rec_unidades.required' => 'Falta campo Unidades'
+            'Rec_codigo.required' => 'Código',
+            'SicFol.required' => 'Folio',
+            'PacID.required' => 'Paciente',
+            'IdPre.required' => 'Prescriptor',
+            'Mb_Cod_aux.required' => 'Cliente',
+            'Env_codigo.required' => 'Envase',
+            'Pre_codigo.required' => 'Forma Farmacéutica',
+            'Rec_cantidad.required' => 'Cantidad',
+            'Rec_unidades.required' => 'Unidades',
+            'Rec_indicacion' => 'Indicación'
         ];
     }
 }

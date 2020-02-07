@@ -22,9 +22,9 @@ class ADSICTRXController extends Controller
         $sics = ADSICTRX::where('Mb_Epr_cod','=','INS')
                 ->where('SicTip','=',2)
                 ->where('SicAut','=','S')
-                ->where('Proc_id','=','C')
+                ->whereIn('Proc_id', ['C', 'D'])
                 ->with('lineasSIC')
-                ->with('lineasSIC.articulo')
+                ->with('lineasSIC.articulo', 'lineasSIC.recetas')
                 ->with('cliente')
                 ->with('paciente')
                 ->get();

@@ -1,6 +1,6 @@
 @extends("theme.$theme.layout")
 @section('titulo')
-SIC Hola coy un cambio
+SIC
 @endsection
 @section('contenido')
 <div class="row">
@@ -28,12 +28,16 @@ SIC Hola coy un cambio
                         @foreach ($sics as $sic)
                         @foreach($sic->lineasSIC as $linea)
                         <tr>
+                            @if ($linea->recetas->sum('Rec_unidades') != intval($linea->SicArtCan))
                             <td>
                                 <a href="{{route('crear_receta', ['SicFol' => $sic->SicFol, 'SicLin'=> $linea->SicLin])}}"
                                     class="btn-accion-tabla tooltipsC" title="Seleccionar SIC">
-                                    <i class="fas fa-check icon-circle"></i>
+                                    <i class="fas fa-check icon-circle bg-info"></i>
                                 </a>
-                            </td>
+                            </td>                               
+                            @else
+                                <td></td>
+                            @endif
                             <td>{{$sic->SicFol}}</td>
                             <td>{{$sic->SicPOnro}}</td>
                             <td>{{date('d-m-Y', strtotime($sic->SicFecemi))}}</td>
@@ -41,15 +45,15 @@ SIC Hola coy un cambio
                             <td>{{$sic->paciente->PacNom}}</td>
                             <td>{{$linea->articulo->Art_nom_ex}}</td>
                             <td>
+                                @if ($linea->recetas->sum('Rec_unidades') == intval($linea->SicArtCan))
+                                <span class="tag-success tooltipsC" title="SIC preparada">Preparada</span>
+                                @else
+                                <span class="tag-warning tooltipsC" title="SIC sin preparar">Sin preparar</span>
+                                @endif
                                 @if ($sic->Sic_urgent == 'S')
                                 <i class="fa fa-exclamation-circle text-danger tooltipsC" title="SIC Urgente"></i>
                                 {{-- @else
                                     <i class="fa fa-exclamation-circle"></i> --}}
-                                @endif
-                                @if ($linea->LineReady == 1)
-                                <span class="tag-success tooltipsC" title="SIC preparada">Preparada</span>
-                                @else
-                                <span class="tag-warning tooltipsC" title="SIC sin preparar">Sin preparar</span>
                                 @endif
                             </td>
                         </tr>

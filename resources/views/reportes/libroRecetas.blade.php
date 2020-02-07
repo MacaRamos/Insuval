@@ -1,9 +1,9 @@
 @extends("theme.$theme.layoutReporte")
 
 @section('contenido')
-<div class="row">
+<div class="row bg-white table-border-none">
     <div class="col-lg-5 mx-auto">
-        <table class="table table-border-none" style="font-size: 13px !important;">
+        <table class="table table-border-none" style="font-size: 13px !important; border: none !important;">
             <thead>
                 <tr>
                     <th class="text-center" style="width: 100px;">RM/RO</th>

@@ -10,7 +10,6 @@ use App\Models\Formulacion\ARTFORMU;
 use App\Models\Funcionario\Funcionario;
 use App\Models\Funcionario\RECETAASISTENTE;
 use App\Models\Paciente\Paciente;
-use App\Models\Precauciones\Precaucion;
 use App\Models\Precauciones\RECETAPRECAUCION;
 use App\Models\Prescriptor\AUXPRE;
 use App\Models\SIC\ADSICTRX;
@@ -41,7 +40,7 @@ class Receta extends Model
 
     public function equipo()
     {
-        return $this->belongsToMany(Equipo::class, 'RecetaEquipo', ['Rec_codigo','Mb_Epr_cod'], 'Equ_codigo');
+        return $this->hasMany(Equipo::class, 'RecetaEquipo', ['Rec_codigo', 'Mb_Epr_cod'], ['Rec_codigo', 'Mb_Epr_cod']);
     }
 
     public function precauciones()

@@ -39,18 +39,19 @@ Route::group(['prefix' => 'admin', 'namespace' => 'Admin', 'middleware' => ['aut
     Route::post('menu-rol', 'MenuRolController@guardar')->name('guardar_menu_rol');
 });
 Route::group(['prefix' => 'recetarioMagistral', 'namespace' => 'RecetarioMagistral', 'middleware' => ['auth','superadmin']], function(){
-    Route::get('receta/{tipo}', 'RecetaController@index')->name('receta');    
+    Route::get('receta/{tipo?}', 'RecetaController@index')->name('receta');    
     Route::get('receta/{SicFol}/{SicLin}/crear', 'RecetaController@crear')->name('crear_receta');
     Route::post('receta', 'RecetaController@guardar')->name('guardar_receta');
     Route::get('receta/{Rec_codigo}/{Rec_fechaVencimiento}/{button}', 'RecetaController@altaCalidad')->name('altaCalidad_receta');
     Route::get('receta/{Rec_codigo}/{button}', 'RecetaController@imprimirEtiqueta')->name('etiquetaReporte');
 
-    Route::get('receta/libroPreparaciones', 'RecetaController@libroPreparaciones')->name('libroPreparaciones');
-    Route::get('receta/libroRecetas', 'RecetaController@libroRecetas')->name('libroRecetas');
+    Route::get('/libroPreparaciones', 'RecetaController@libroPreparaciones')->name('libroPreparaciones');
+    Route::get('/libroRecetas', 'RecetaController@libroRecetas')->name('libroRecetas');
     /* RUTAS FACTURA */
     Route::get('factura/', 'FacturaController@index')->name('factura');
     Route::post('factura/', 'FacturaController@index')->name('factura');
     Route::get('factura/{SicFol}', 'FacturaController@facturar')->name('facturar');
+    Route::get('gdespacho/{SicFol}', 'FacturaController@gdespacho')->name('gdespacho');
 
     Route::get('buscarPaciente', 'RecetaController@buscarPaciente')->name('buscarPaciente');
     Route::get('buscarCliente', 'RecetaController@buscarCliente')->name('buscarCliente');

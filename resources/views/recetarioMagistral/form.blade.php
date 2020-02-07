@@ -2,19 +2,23 @@
     <div class="row">
         <!-- Tipo receta, numero receta y fecha vencimiento -->
         <div class="col-lg-2">
-            <div class="form-group clearfix pt-4">
+            <!-- radio -->
+            <div class="form-group clearfix">
                 <div class="icheck-primary d-inline">
-                    <input type="radio" id="radioPrimary1" name="Rec_tipo" value="RM" checked>
-                    <label for="Rec_tipoRM">RM
+                    <input type="radio" id="radioPrimary1" name="Rec_tipo" value="RM" onclick="radioTipoRM();" checked>
+                    <label for="radioPrimary1">RM
                     </label>
                 </div>
                 <div class="icheck-primary d-inline">
-                    <input type="radio" id="radioPrimary2" name="Rec_tipo" value="RO">
-                    <label for="Rec_tipoRO">RO
+                    <input type="radio" id="radioPrimary2" name="Rec_tipo" value="RO" onclick="radioTipoRO();">
+                    <label for="radioPrimary2">RO
                     </label>
                 </div>
             </div>
         </div>
+
+
+
         <div class="col-lg-2">
             <div class="form-group">
                 <label for="Receta" class="requerido">Nª Receta</label>
@@ -30,12 +34,11 @@
                         <i class="far fa-calendar-alt"></i> Duración
                         <i class="fas fa-caret-down"></i>
                     </button>
-                    <input type="text" class="form-control" name="Rec_fechaPreparacion"
-                        id="Rec_fechaPreparacion" required />
-                    <input type="text" class="form-control" name="Rec_fechaVencimiento"
-                        id="Rec_fechaVencimiento" required />
-                        <input type="hidden" class="form-control" name="Ven_codigo"
-                        id="Ven_codigo" required />
+                    <input type="text" class="form-control" name="Rec_fechaPreparacion" id="Rec_fechaPreparacion"
+                        required />
+                    <input type="text" class="form-control" name="Rec_fechaVencimiento" id="Rec_fechaVencimiento"
+                        required />
+                    <input type="hidden" class="form-control" name="Ven_codigo" id="Ven_codigo" required />
                 </div>
             </div>
         </div>
@@ -46,9 +49,10 @@
         <div class="col-lg-4">
             <div class="form-group">
                 <label for="SicFol" class="requerido">SIC</label>
-                <input type="text" class="form-control" name="SicFol" id="SicFol" value="{{$sic->SicFol}}" readonly="readonly"
-                    required />
-                    <input type="hidden" class="form-control" name="SicLin" id="SicLin" value="{{$sic->lineasSIC[0]->SicLin}}"/>
+                <input type="text" class="form-control" name="SicFol" id="SicFol" value="{{$sic->SicFol}}"
+                    readonly="readonly" required />
+                <input type="hidden" class="form-control" name="SicLin" id="SicLin"
+                    value="{{$sic->lineasSIC[0]->SicLin}}" />
             </div>
         </div>
         <div class="col-lg-4">
@@ -132,7 +136,7 @@
             <div class="form-group">
                 <label for="Rec_unidades" class="requerido">Unidades</label>
                 <input type="number" class="form-control" name="Rec_unidades" id="Rec_unidades"
-                    value="{{round($sic->lineasSIC[0]->SicArtCan, 0)}}" required />
+                    value="{{round($sic->lineasSIC[0]->SicArtCan-$sic->lineasSIC[0]->SicCanDesp, 0)}}" required />
             </div>
         </div>
         <div class="col-lg-4">
@@ -152,9 +156,13 @@
                 <select class="form-control" name='Fun_quimico'>
                     @foreach ($operadores as $operador)
                     @if ($operador->Fun_tipo == 'DT')
-                    <option selected="true" value="{{$operador->Fun_rut}}">{{$operador->Fun_nombre}}</option>
+                    <option selected="true" value="{{$operador->Fun_rut}}">{{explode(" ", $operador->Fun_nombre)[0]}}
+                        {{explode(" ", $operador->Fun_apellido)[0]}}
+                        {{substr(explode(" ", $operador->Fun_apellido)[1],0,1)}}.</option>
                     @else
-                    <option value="{{$operador->Fun_rut}}">{{$operador->Fun_nombre}}</option>
+                    <option value="{{$operador->Fun_rut}}">{{explode(" ", $operador->Fun_nombre)[0]}}
+                        {{explode(" ", $operador->Fun_apellido)[0]}}
+                        {{substr(explode(" ", $operador->Fun_apellido)[1],0,1)}}.</option>
                     @endif
                     @endforeach
                 </select>
@@ -173,7 +181,8 @@
                     <li>
                         <label style="font-weight: 400;">
                             <input type="checkbox" name='asistentes[]' value="{{$asistente->Fun_rut}}">
-                            {{$asistente->Fun_nombre}}
+                            {{explode(" ", $asistente->Fun_nombre)[0]}}
+                            {{explode(" ", $asistente->Fun_apellido)[0]}}
                         </label>
                     </li>
                     @endforeach
@@ -187,7 +196,8 @@
         <div class="col-lg-12">
             <div class="form-group">
                 <label for="Rec_modoPreparacion">Modo preparación</label>
-                <textarea class="form-control" rows="7" cols="100" name="Rec_modoPreparacion" value="{{$sic->lineasSIC[0]->articulo->art_receta}}">{{trim($sic->lineasSIC[0]->articulo->art_receta)}}</textarea>
+                <textarea class="form-control" rows="7" cols="100" name="Rec_modoPreparacion"
+                    value="{{$sic->lineasSIC[0]->articulo->art_receta}}">{{trim($sic->lineasSIC[0]->articulo->art_receta)}}</textarea>
             </div>
         </div>
         <!-- /Modo preparación -->

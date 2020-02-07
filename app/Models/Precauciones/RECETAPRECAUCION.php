@@ -12,8 +12,8 @@ class RECETAPRECAUCION extends Model
     use Compoships;
     protected $dateFormat = 'Y-d-m H:i:s.v';
     protected $table = "RecetaPrecaucion";
-    protected $guarded = ['Rec_codigo', 'Mb_Epr_cod','Cau_codigo'];
-    protected $primaryKey = ['Rec_codigo', 'Mb_Epr_cod','Cau_codigo'];
+    protected $guarded = ['Rec_codigo', 'Mb_Epr_cod', 'Cau_codigo'];
+    protected $primaryKey = ['Rec_codigo', 'Mb_Epr_cod', 'Cau_codigo'];
     public $timestamps = false;
 
     public function precaucion()

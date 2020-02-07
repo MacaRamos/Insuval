@@ -38,18 +38,28 @@ class RecetaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($tipo)
+    public function index($tipo = '')
     {
         $recetas = Receta::orderBy('Rec_codigo')
-            ->with(['lineasReceta', 'lineasReceta.articulo'])
+            ->with('lineasReceta', 'lineasReceta.articulo')
             ->with('cliente')
             ->with('paciente')
             ->with('formaFarmaceutica')
             ->with('estado')
             ->with('sic')
             ->get();
+        if ($tipo == 'producir') 
+        {
+            $recetas = $recetas->where('Est_codigo', '=', 1);//SOLICITADA
+        }
+        if ($tipo == 'alta') {
+            $recetas = $recetas->where('Est_codigo', '=', 2);//SOLICITADA
+        }
+        if ($tipo == 'calidad') {
+            $recetas = $recetas->where('Est_codigo', '=', 3);//PREPARADA
+        }
 
-        //dd($recetas);
+        // dd($recetas);
         return view('recetarioMagistral.index', compact('recetas', 'tipo'));
     }
 
@@ -74,9 +84,9 @@ class RecetaController extends Controller
         $asistentes = Funcionario::where('Fun_tipo', '=', 'AM')
             ->get();
 
-        $operadores = Funcionario::where('Fun_tipo', '=', 'DT')
-            ->orWhere('Fun_tipo', 'like', 'Q%')
-            ->get();
+        $operadores = Funcionario::where('Fun_tipo', '=' , 'DT')
+                                 ->OrWhere('Fun_tipo', 'like', 'Q%')
+                                 ->get();
 
         $equipos = Equipo::get();
         $precauciones = Precaucion::get();
@@ -217,9 +227,7 @@ class RecetaController extends Controller
         $receta->Rec_modoPreparacion = $request->Rec_modoPreparacion;
         $receta->Rec_detalleTipo = $request->Rec_detalleTipo;
         $receta->Rec_organolepticas = $request->Rec_organolepticas;
-        $receta->Est_codigo = 1;
-        $receta->Rec_alta = 'N';
-        $receta->Rec_calidad = 'N';
+        $receta->Est_codigo = 1;//SOLICITADA
         $receta->Ven_codigo = $request->Ven_codigo;
         $receta->save();
 
@@ -273,33 +281,37 @@ class RecetaController extends Controller
             ->Where('SicFol', '=', $request->SicFol)
             ->with(["lineasSIC" => function ($q) use ($SicLin) {
                 $q->where('SicLin', '=', $SicLin);
-            }])
+            }, 'lineasSIC.recetas'])
             ->first();
+        
+        $sic->Proc_id = 'D';//EN PRODUCCIÓN
+        $sic->update();
+        // if ($sic->lineasSIC[0]->recetas->sum('Rec_unidades') == intval($sic->lineasSIC[0]->SicArtCan)) {
+            
+        //     $lineas = ADSICTRX::where('Mb_Epr_cod', '=', $this->Emp)
+        //         ->where('SicTip', '=', 2)
+        //         ->Where('SicFol', '=', $request->SicFol)
+        //         ->with('lineasSIC', 'lineasSIC.recetas')
+        //         ->first();
+            
+        //     $lineasListas = true;
+        //     foreach ($lineas->lineasSIC as $linea) {
+        //         if ($linea->recetas->sum('Rec_unidades') != intval($linea->SicArtCan,0)) {
+        //             $lineasListas = false;
+        //         }
+        //     }
+        //     if ($lineasListas){
 
-        $sic->lineasSIC[0]->LineReady = 1;
-        $sic->lineasSIC[0]->update();
-        $lineas = ADSICTRX::where('Mb_Epr_cod', '=', $this->Emp)
-            ->where('SicTip', '=', 2)
-            ->Where('SicFol', '=', $request->SicFol)
-            ->with("lineasSIC")
-            ->first();
-        $lineasListas = true;
-        foreach ($lineas->lineasSIC as $linea) {
-            if ($linea->LineReady != 1) {
-                $lineasListas = false;
-            }
-        }
-        if ($lineasListas) {
-            $sic->Proc_id = 'D';
-            $sic->update();
-        }
+        //     }
+        // }
+
         $notificacion = array(
             'mensaje' => 'Receta creada con éxito',
             'tipo' => 'success',
             'titulo' => 'Receta'
         );
 
-        return redirect('recetarioMagistral/receta')->with($notificacion);
+        return redirect('sic')->with($notificacion);
     }
 
     /**
@@ -309,30 +321,71 @@ class RecetaController extends Controller
      */
     public function altaCalidad($Rec_codigo, $Rec_fechaVencimiento, $button)
     {
-        if ($button == 'alta') {
-            $receta = Receta::where('Mb_Epr_cod', '=', $this->Emp)->where('Rec_codigo', '=', $Rec_codigo)->first();
-            $receta->Rec_alta = 'S';
+        if ($button == 'producir') {
+            $receta = Receta::where('Mb_Epr_cod', '=', $this->Emp)
+                ->where('Rec_codigo', '=', $Rec_codigo)
+                ->first();
+            $receta->Est_codigo = '2';//EN PRODUCCION
             $receta->update();
-            return redirect('recetarioMagistral/receta')->with('mensaje', 'Receta dada de alta con éxito');
+            $notificacion = array(
+                'mensaje' => 'Receta enviada a producción con éxito',
+                'tipo' => 'info',
+                'titulo' => 'Receta',
+            );
+    
+            return redirect('recetarioMagistral/receta/producir')->with($notificacion);
         }
-        if ($button == 'calidad') {
-
+        if ($button == 'alta') {
             $cod_mov = 'I15';
             $registrosI15 = $this->movimientoI15($Rec_codigo, $Rec_fechaVencimiento, $cod_mov);
 
             $registrosD1 = $this->Pex002($registrosI15);
 
             $this->actualizarLote($registrosD1);
-            /* Paso final: Cambiar estado de control de calidad a la receta: Rec_calidad = 'S' */
             $receta = Receta::where('Mb_Epr_cod', '=', $this->Emp)
                 ->where('Rec_codigo', '=', $Rec_codigo)
                 ->with('formulacion')
                 ->get();
-            $receta[0]->Rec_calidad = 'S';
+            $receta[0]->Est_codigo = '3';//Preparada
             $receta[0]->update();
             $this->rebajandoMateriales($registrosI15, $receta);
+            $notificacion = array(
+                'mensaje' => 'Receta dada de alta con éxito',
+                'tipo' => 'info',
+                'titulo' => 'Receta',
+            );
+    
+            return redirect('recetarioMagistral/receta/alta')->with($notificacion);
+        }
+        if ($button == 'calidad') {
+
+            /* Paso final: Cambiar estado de control de calidad a la receta: Rec_calidad = 'S' */
+            $receta = Receta::where('Mb_Epr_cod', '=', $this->Emp)
+                ->where('Rec_codigo', '=', $Rec_codigo)
+                ->with('sic', 'sic.lineasSIC')
+                ->first();
+            $receta->Est_codigo = 4;//APROBADA
+            $receta->update();
+
+
+            $lineasListas = true;
+            foreach ($receta->sic->lineasSIC as $linea) {
+                if ($linea->recetas->sum('Rec_unidades') != intval($linea->SicArtCan,0)) {
+                    $lineasListas = false;
+                }
+            }
+            if ($lineasListas){
+                $receta->sic->Proc_id = 'E';//EN CONTROL DE CALIDAD
+                $receta->sic->update();
+            }
             /* Fin Paso final */
-            return redirect('recetarioMagistral/receta')->with('mensaje', 'Receta aprobada con éxito');
+            $notificacion = array(
+                'mensaje' => 'Receta aprobada con éxito',
+                'tipo' => 'info',
+                'titulo' => 'Receta',
+            );
+    
+            return redirect('recetarioMagistral/receta/calidad')->with($notificacion);
         }
 
     }
@@ -670,7 +723,7 @@ class RecetaController extends Controller
                 $existock->Mb_Epr_cod = $this->Emp;
                 $existock->Ex_bod_cod = $registrosI15[0]->EX_BODSEDE; //bodega por defecto de la transaccion
                 $existock->Ex_ubi_cod = 'EXI'; //ubicacion por defecto de la bodega ventas
-                $existock->Ex_art_cod = $existock->Gc_art2;
+                $existock->Ex_art_cod = $item->Gc_art2;
                 $existock->Stock_actu = $cantidad * -1;
                 $existock->save();
             }
@@ -699,16 +752,16 @@ class RecetaController extends Controller
     {
         $receta = Receta::where('Rec_codigo', '=', $Rec_codigo)
             ->where('Mb_Epr_cod', '=', $this->Emp)
-            ->with('paciente', 'prescriptor', 
-                'formaFarmaceutica', 'operador', 
-                'precauciones.precaucion', 'sic', 
+            ->with('paciente', 'prescriptor',
+                'formaFarmaceutica', 'operador',
+                'precauciones.precaucion', 'sic',
                 'vencimiento', 'formulacion',
                 'formulacion.nombreFormulacion',
                 'asistentes', 'asistentes.funcionario')
             ->first();
 
         $asistentes = array();
-        foreach ($receta->asistentes as $asistente){
+        foreach ($receta->asistentes as $asistente) {
             $nombreAsistente = $asistente->funcionario->Fun_nombre;
             $nombreAsistente = explode(" ", $nombreAsistente);
             $apellidoAsistente = $asistente->funcionario->Fun_apellido;
@@ -717,7 +770,7 @@ class RecetaController extends Controller
             array_push($asistentes, $nombreCompleto);
         }
         $asistentes = implode(", ", $asistentes);
-        
+
         $ditec = Funcionario::where('Fun_tipo', '=', 'DT')->first();
 
         $nombreDitec = trim(strtoupper($ditec->Fun_nombre));
@@ -738,7 +791,7 @@ class RecetaController extends Controller
                 array_push($precauciones, trim($item->precaucion[0]->Cau_descripcion));
             }
             $precauciones = implode(",", $precauciones);
-            
+
             $xml = '<?xml version="1.0" encoding="UTF-8"?>
             <etiqueta>
                 <encabezado>
@@ -832,6 +885,7 @@ class RecetaController extends Controller
         $pdf = \PDF::loadView('reportes.libroRecetas', compact('recetas'))->setOrientation('landscape');
         return $pdf->stream();
     }
+
     /**
      * Display the specified resource.
      *

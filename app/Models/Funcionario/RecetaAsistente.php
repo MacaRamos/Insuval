@@ -12,8 +12,8 @@ class RECETAASISTENTE extends Model
     use Compoships;
     protected $dateFormat = 'Y-d-m H:i:s.v';
     protected $table = "RECETAASISTENTE";
-    protected $guarded = ['Rec_codigo', 'Mb_Epr_cod','Fun_rut'];
-    protected $primaryKey = ['Rec_codigo', 'Mb_Epr_cod','Fun_rut'];
+    protected $guarded = ['Rec_codigo', 'Mb_Epr_cod', 'Fun_rut'];
+    protected $primaryKey = ['Rec_codigo', 'Mb_Epr_cod', 'Fun_rut'];
     public $timestamps = false;
 
     public function funcionario()

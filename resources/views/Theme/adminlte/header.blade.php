@@ -1,8 +1,8 @@
-<nav class="main-header navbar navbar-expand navbar-white navbar-light">
+<nav class="main-header navbar navbar-expand bg-info">
   <!-- Left navbar links -->
   <ul class="navbar-nav">
     <li class="nav-item">
-      <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+      <a class="nav-link text-white" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
     </li>
     
   </ul>
@@ -116,8 +116,8 @@
       </a> --}}
 
       <li class="dropdown user user-menu">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-user"></i>
+        <a class="nav-link text-white" data-toggle="dropdown" href="#">
+          <img src="{{asset("assets/img/Avatar.png")}}" class="img-circle hover-brightness" alt="User Image" width="36" height="36">
         </a>
 
 

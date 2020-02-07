@@ -21,7 +21,6 @@ label.requerido:after{
     padding-left:40px !important;
 }
 .icon-circle{
-    background-color: #c5c4c4;
     border-top-left-radius: 25px;
     border-top-right-radius: 25px;
     border-bottom-right-radius: 25px;
@@ -34,6 +33,8 @@ label.requerido:after{
     text-align: center;
     line-height: 25px !important;
 }
+
+
 .icon-circle:hover{
     filter: brightness(0.8);
     border-top-left-radius: 25px;
@@ -48,7 +49,7 @@ label.requerido:after{
     text-align: center;
     line-height: 25px !important;
 }
-.tag-success, .tag-danger, .tag-warning, .tag-info{
+.tag-success, .tag-danger, .tag-warning, .tag-info, .tag-lightslategray{
     padding-bottom: .3em !important;
     padding-left: .6em !important;
     padding-right: .6em !important;
@@ -70,8 +71,14 @@ label.requerido:after{
 .tag-success{
     background-color: #00a65a;
 }
-.tag-warning{
-    background-color: #f39c12;
+.tag-warning {
+    background-color: #ffc107;
+}
+.tag-info {
+    background-color: #17a2b8;
+}
+.tag-lightslategray{
+    background-color: lightslategray;
 }
 body{
     font-size: 12pt;
@@ -167,9 +174,25 @@ li.user-header{
     border: none !important;
 }
 .page-item.active .page-link{
-    background-color:  #17a2b8!important;
-    border-color: #17a2b8!important;
+    background-color:  #08c !important;
+    border-color: #08c !important;
 }
 .pagination > li > a{
-    color: #17a2b8!important;
+    color: #08c !important;
+}
+.nav-pills .nav-link:not(.active):hover {
+    color: #000;
+}
+.bg-info,
+.btn-info{
+    background-color: #08c !important;
+}
+.text-info{
+    color: #08c !important;
+}
+.border-info{
+    border-color: #08c !important;
+}
+.hover-brightness:hover{
+    filter: brightness(0.8);
 }
