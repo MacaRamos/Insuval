@@ -9,12 +9,16 @@ Inicio
 $(function() {
     var sics = @json($sics);
     datos = [];
+    articulos = [];
     fechasSIC = [];
     sics.forEach(sic => {
         var SicVneto = 0
+        var countArticulos = 0;
         sic.lineasSIC.forEach(linea => {
             SicVneto += linea.SicArtCan*linea.Sicartval;
+            countArticulos+= 1;
         });
+        articulos.push(countArticulos);
         datos.push(Math.round(SicVneto));
         date = new Date(sic.SicFecemi);
         if ((date.getMonth() + 1) < 10){
@@ -63,15 +67,18 @@ $(function() {
             var datoTemporal = datos[i];
             datos[i] = 0;
             datos[i+1] = datoTemporal;
+            var articuloTemporal = articulos[i];
+            articulos[i] = 0;
+            articulos[i+1] = articuloTemporal;
         }
     }
-
     var ctx = document.getElementById('myChart').getContext('2d');
+
     var areaChartOptions = {
       maintainAspectRatio : false,
       responsive : true,
       legend: {
-        display: false
+        display: true
       },
       scales: {
         xAxes: [{
@@ -99,24 +106,16 @@ $(function() {
     var areaChartData = {
         labels: mesCompleto,
         datasets: [{
-            label: '# of Votes',
+            label: 'Venta',
             data: datos,
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
+            backgroundColor     : 'rgba(255,107,138,0.2)',
+            borderColor         : 'rgba(255,107,138,1)',
+            borderWidth: 1
+        },{
+            label: 'Articulos',
+            data: articulos,
+            backgroundColor     : 'rgba(23, 162, 184, 0.2)',
+            borderColor         : 'rgba(23, 162, 184, 1)',
             borderWidth: 1
         }]
     };
