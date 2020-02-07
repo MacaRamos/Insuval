@@ -155,7 +155,7 @@ var myChart = new Chart(ctx, {
 
         <div class="info-box-content">
           <span class="info-box-text">FACTURACIÓN</span>
-          <span class="info-box-number">41,410</span>
+          <span class="info-box-number">41.410</span>
         </div>
         <!-- /.info-box-content -->
       </div>
