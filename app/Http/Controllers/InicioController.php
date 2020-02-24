@@ -18,17 +18,16 @@ class InicioController extends Controller
     {
         
         if (session()->get('Rol_nombre')) {
-            $primerDia = new DateTime();
-            $primerDia = $primerDia->modify('first day of this month');
-            $hoy = new DateTime();
+            $primerDia = new DateTime(date('d-m-Y'));
+            $primerDia = $primerDia->modify('first day of this month')->format('d-m-Y');
+            $hoy = new DateTime(date('d-m-Y'));
             $sics = ADSICTRX::where('Mb_Epr_cod', '=', $this->Emp)
                                ->where('SicTip', '=', 2)
                                ->where('SicFecemi','>=', $primerDia)
-                               ->where('SicFecemi', '<=', $hoy)
+                               ->where('SicFecemi', '<=', $hoy->format('d-m-Y'))
                                ->with(["lineasSIC" => function($q){
                                 $q->where('SicCanDesp', '>', 0);
                                 }])
-                                ->orderBy('SicFecemi')
                                 ->get();
                   
             return view('inicio', compact('sics'));
