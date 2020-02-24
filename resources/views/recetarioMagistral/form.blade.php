@@ -196,7 +196,7 @@
         <div class="col-lg-12">
             <div class="form-group">
                 <label for="Rec_modoPreparacion">Modo preparación</label>
-                <textarea class="form-control" rows="7" cols="100" name="Rec_modoPreparacion"
+                <textarea class="form-control" rows="7" cols="100" readonly="readonly" name="Rec_modoPreparacion"
                     value="{{$sic->lineasSIC[0]->articulo->art_receta}}">{{trim($sic->lineasSIC[0]->articulo->art_receta)}}</textarea>
             </div>
         </div>
