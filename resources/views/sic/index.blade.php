@@ -16,7 +16,8 @@ SIC
                         <tr>
                             <th style="width: 100px;"></th>
                             <th>Folio</th>
-                            <th>SicPOnro</th>
+                            <th>linea</th>
+                            <th>N O/C</th>
                             <th>Fecha</th>
                             <th>Prescriptor</th>
                             <th>Paciente</th>
@@ -38,6 +39,7 @@ SIC
                             @else
                                 <td></td>
                             @endif
+                            <td>{{$linea->SicLin}}</td>
                             <td>{{$sic->SicFol}}</td>
                             <td>{{$sic->SicPOnro}}</td>
                             <td>{{date('d-m-Y', strtotime($sic->SicFecemi))}}</td>

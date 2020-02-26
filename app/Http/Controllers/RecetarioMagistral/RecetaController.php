@@ -52,10 +52,12 @@ class RecetaController extends Controller
         {
             $recetas = $recetas->where('Est_codigo', '=', 1);//SOLICITADA
         }
-        if ($tipo == 'alta') {
+        if ($tipo == 'alta') 
+        {
             $recetas = $recetas->where('Est_codigo', '=', 2);//SOLICITADA
         }
-        if ($tipo == 'calidad') {
+        if ($tipo == 'calidad') 
+        {
             $recetas = $recetas->where('Est_codigo', '=', 3);//PREPARADA
         }
 
@@ -80,6 +82,11 @@ class RecetaController extends Controller
             ->with('paciente')
             ->first();
 
+        $recetasPrimeras = Receta::where('SicTip', '=', 2) //RECETAS HECHAS PARA LA MISMA LINEA, EN CASO DE QUE NO HUBIERAN PREPARADO TODAS LAS UNIDADES
+                                 ->Where('SicFol', '=', $SicFol)
+                                 ->where('SicLin', '=', $SicLin)
+                                 ->get();
+
         // dd($sic);
         $asistentes = Funcionario::where('Fun_tipo', '=', 'AM')
             ->get();
@@ -98,7 +105,7 @@ class RecetaController extends Controller
 
         $vencimientos = Vencimiento::get();
 
-        return view('recetarioMagistral.crear', compact('sic', 'operadores', 'asistentes', 'equipos', 'precauciones', 'receta', 'vencimientos'));
+        return view('recetarioMagistral.crear', compact('sic', 'operadores', 'asistentes', 'equipos', 'precauciones', 'receta', 'vencimientos', 'recetasPrimeras'));
     }
 
     /**
@@ -211,6 +218,7 @@ class RecetaController extends Controller
         $receta->SicTip = 2;
         $receta->Rec_codigo = $request->Rec_codigo;
         $receta->SicFol = $request->SicFol;
+        $receta->SicLin = $request->SicLin;
         $receta->Pre_codigo = $request->Pre_codigo;
         $receta->Fun_quimico = $request->Fun_quimico;
         $receta->Rec_cantidad = $request->Rec_cantidad;

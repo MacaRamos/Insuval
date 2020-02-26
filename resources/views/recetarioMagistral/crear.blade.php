@@ -60,6 +60,8 @@ Receta
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.10.1/js/mdb.min.js"></script>
 @include('includes.mensaje')
 <script type="text/javascript">
+var fechas = {};
+var codigos = {};
 function radioTipoRO(){
     var vencimientos = @json($vencimientos);
     var start = moment();
@@ -72,12 +74,14 @@ function radioTipoRM(){
     var end = moment().add(vencimientos[0].Ven_cantidad, 'days');
     mostrarFecha(start, end, vencimientos[0].Ven_codigo);
 }
-function mostrarFecha(start, end, Ven_codigo) {
+function mostrarFecha(start, end) {
+    $('#fechaDuracion').val(start.format('DD/MM/YYYY')+' - '+end.format('DD/MM/YYYY'));
     $('#Rec_fechaPreparacion').val(start.format('DD/MM/YYYY'));
     $('#Rec_fechaVencimiento').val(end.format('DD/MM/YYYY'));
-    $('#Ven_codigo').val(Ven_codigo);
+    $('#Ven_codigo').val(codigos[end.format('DD/MM/YYYY')]);
 }
     $(document).ready(function(){
+        
         var maximo = @json(round($sic->lineasSIC[0]->SicArtCan-$sic->lineasSIC[0]->SicCanDesp, 0));
         $('#Rec_unidades').attr('max', maximo);
         $('#Rec_indicacion').attr('maxlength', 40);
@@ -88,23 +92,25 @@ function mostrarFecha(start, end, Ven_codigo) {
         var start = moment();
         var end =  moment().add(vencimientos[0].Ven_cantidad, 'days');
     
-    mostrarFecha(start, end, Ven_codigo);
-    var fechas = {};
+    mostrarFecha(start, end);
+    
  
     $.each(vencimientos,function(key, vencimiento){
         if(vencimiento.Ven_tipo === 'Días '){
             fechas[vencimiento.Ven_cantidad+' '+vencimiento.Ven_tipo] = [moment(), moment().add(vencimiento.Ven_cantidad, 'days')];
+            codigos[moment().add(vencimiento.Ven_cantidad, 'days').format('DD/MM/YYYY')] = vencimiento.Ven_codigo;
         }
         if(vencimiento.Ven_tipo === 'Meses'){
             fechas[vencimiento.Ven_cantidad+' '+vencimiento.Ven_tipo] = [moment(), moment().add(vencimiento.Ven_cantidad, 'month')];
+            codigos[moment().add(vencimiento.Ven_cantidad, 'month').format('DD/MM/YYYY')] = vencimiento.Ven_codigo;
         }
         if(vencimiento.Ven_tipo === 'años'){
             fechas[vencimiento.Ven_cantidad+' '+vencimiento.Ven_tipo] = [moment(), moment().add(vencimiento.Ven_cantidad, 'year')];
-        }
-        Ven_codigo = vencimiento.Ven_codigo;
+            codigos[moment().add(vencimiento.Ven_cantidad, 'year').format('DD/MM/YYYY')] = vencimiento.Ven_codigo;
+        }        
     });
 
-   
+   console.log(fechas[0]);
     $('#validez-btn').daterangepicker(
       {
         ranges   : fechas,
@@ -147,7 +153,7 @@ function mostrarFecha(start, end, Ven_codigo) {
       },
       mostrarFecha
     );
-    mostrarFecha(start, end, Ven_codigo);
+    mostrarFecha(start, end);
 });
 </script>
 <script>

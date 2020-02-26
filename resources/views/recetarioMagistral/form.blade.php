@@ -16,9 +16,6 @@
                 </div>
             </div>
         </div>
-
-
-
         <div class="col-lg-2">
             <div class="form-group">
                 <label for="Receta" class="requerido">Nª Receta</label>
@@ -34,11 +31,13 @@
                         <i class="far fa-calendar-alt"></i> Duración
                         <i class="fas fa-caret-down"></i>
                     </button>
-                    <input type="text" class="form-control" name="Rec_fechaPreparacion" id="Rec_fechaPreparacion"
+                    <input type="text" class="form-control" name="fechaDuracion" id="fechaDuracion"
                         required />
-                    <input type="text" class="form-control" name="Rec_fechaVencimiento" id="Rec_fechaVencimiento"
+                    <input type="hidden" class="form-control" name="Rec_fechaPreparacion" id="Rec_fechaPreparacion"
                         required />
-                    <input type="hidden" class="form-control" name="Ven_codigo" id="Ven_codigo" required />
+                    <input type="hidden" class="form-control" name="Rec_fechaVencimiento" id="Rec_fechaVencimiento"
+                        required />
+                    <input type="hidden" class="form-control" name="Ven_codigo" id="Ven_codigo" />
                 </div>
             </div>
         </div>
@@ -136,7 +135,7 @@
             <div class="form-group">
                 <label for="Rec_unidades" class="requerido">Unidades</label>
                 <input type="number" class="form-control" name="Rec_unidades" id="Rec_unidades"
-                    value="{{round($sic->lineasSIC[0]->SicArtCan-$sic->lineasSIC[0]->SicCanDesp, 0)}}" required />
+                    value="{{round($sic->lineasSIC[0]->SicArtCan-$recetasPrimeras->sum('Rec_unidades'))}}" required />
             </div>
         </div>
         <div class="col-lg-4">

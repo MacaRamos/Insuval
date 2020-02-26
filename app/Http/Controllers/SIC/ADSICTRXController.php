@@ -23,10 +23,10 @@ class ADSICTRXController extends Controller
                 ->where('SicTip','=',2)
                 ->where('SicAut','=','S')
                 ->whereIn('Proc_id', ['C', 'D'])
-                ->with('lineasSIC')
-                ->with('lineasSIC.articulo', 'lineasSIC.recetas')
+                ->with('lineasSIC','lineasSIC.articulo', 'lineasSIC.recetas')
                 ->with('cliente')
                 ->with('paciente')
+                ->orderBy('Sic_urgent', 'DESC')
                 ->get();
         return view('sic.index', compact('sics'));
     }

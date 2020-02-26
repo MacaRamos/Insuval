@@ -83,7 +83,7 @@ Recetas
               </td>
               <td>
                 <a href="{{route('etiquetaReporte', ['Rec_codigo' => trim($receta->Rec_codigo), 'button' => 'reporte'])}}"
-                  class="btn-accion-tabla tooltipsC" title="Imprimir etiqueta">
+                  class="btn-accion-tabla tooltipsC" title="Ver Reporte">
                   <i class="fas fa-file-prescription icon-circle bg-info"></i>
                 </a>
                 <a href="{{route('etiquetaReporte', ['Rec_codigo' => trim($receta->Rec_codigo), 'button' => 'imprimir'])}}"

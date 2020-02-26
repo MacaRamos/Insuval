@@ -29,7 +29,7 @@ class ADSICLIN extends Model
 
     public function recetas()
     {
-        return $this->hasMany(Receta::class, ['Mb_Epr_cod', 'PrincipioActivo'], ['Mb_Epr_cod', 'Art_cod']);
+        return $this->hasMany(Receta::class, ['Mb_Epr_cod', 'PrincipioActivo', 'SicLin'], ['Mb_Epr_cod', 'Art_cod', 'SicLin']);
     }
 
     // public function recetas($Art_cod)
