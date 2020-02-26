@@ -114,8 +114,12 @@
         <div class="col-lg-4">
             <div class="form-group">
                 <label for="Rec_cantidad" class="requerido">Cant. Preparado</label>
-                <input type="text" class="form-control" name="Rec_cantidad" id="Rec_cantidad"
-                    value="{{old('Rec_cantidad')}}" required />
+                <div class="input-group">
+                    <input type="text" class="form-control" name="Rec_cantidad" id="Rec_cantidad"
+                    value="{{old('Rec_cantidad')}}" required /><span id="um"></span>
+                </div>
+                
+                
             </div>
         </div>
         <!-- /Envase, Forma Farmacéutica y Cant. Preparado -->

@@ -273,7 +273,8 @@ function mostrarFecha(start, end) {
                     var resp = $.map(data,function(FormaFarmaceutica){
                         return {
                                 label: FormaFarmaceutica.Pre_descripcion,
-                                id: FormaFarmaceutica.Pre_codigo
+                                id: FormaFarmaceutica.Pre_codigo,
+                                um: FormaFarmaceutica.Pre_unidadMedida
                             };
                     }); 
                     response(resp);
@@ -283,6 +284,7 @@ function mostrarFecha(start, end) {
         select: function (event, ui) {
             $("#Pre_descripcion").val(ui.item.label); // display the selected text
             $("#Pre_codigo").val(ui.item.id); // save selected id to hidden input
+            $("#um").text(ui.item.um);
         },
         minLength: 1
     });
