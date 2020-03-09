@@ -33,6 +33,7 @@ use Illuminate\Http\Request;
 class RecetaController extends Controller
 {
     private $Emp = 'INS';
+    private $registrosI15;
     /**
      * Display a listing of the resource.
      *
@@ -346,10 +347,8 @@ class RecetaController extends Controller
         if ($button == 'alta') {
             $cod_mov = 'I15';
             $registrosI15 = $this->movimientoI15($Rec_codigo, $Rec_fechaVencimiento, $cod_mov);
-
-            $registrosD1 = $this->Pex002($registrosI15);
-
-            $this->actualizarLote($registrosD1);
+            
+            
             $receta = Receta::where('Mb_Epr_cod', '=', $this->Emp)
                 ->where('Rec_codigo', '=', $Rec_codigo)
                 ->with('formulacion')
@@ -582,111 +581,6 @@ class RecetaController extends Controller
         /* Fin Paso 4 */
     }
 
-    private function Pex002($registrosI15)
-    { //Movimiento D1, y creción y Movimiento Lote (Rec_codigo)
-
-        $cod_mov = 'D1';
-        $EX_OBS1 = 'Facturacion PT';
-        $Mov_serie = $this->obtenerFolio($cod_mov);
-
-        $existrxc = new EXISTRXC;
-        $existrxc->MOV_FOLIO = $Mov_serie;
-        $existrxc->Ex_mov_cod = $cod_mov;
-        $existrxc->Mb_Epr_cod = $this->Emp;
-        $existrxc->MOV_FECHA = $registrosI15[0]->MOV_FECHA;
-        $existrxc->MOV_HORA = date("H:i:s");
-        $existrxc->EX_ESTDOC = 'D';
-        $existrxc->EX_ESTPRT = 'N';
-        $existrxc->MOV_STATUS = 'A';
-        $existrxc->Mb_Tip_Doc = $registrosI15[0]->Mb_Tip_Doc;
-        $existrxc->EX_NRODOCT = $registrosI15[0]->EX_NRODOCT;
-        $existrxc->EX_OBS1 = $EX_OBS1;
-        $existrxc->EX_OBS2 = $EX_OBS1;
-        $existrxc->EX_INDANUL = 'N';
-        $existrxc->Mov_gd_fol = $registrosI15[0]->Mov_gd_fol;
-        $existrxc->EX_SEDE = $registrosI15[0]->exisbode()->first()->Bod_sede;
-        $existrxc->EX_BODSEDE = $registrosI15[0]->Bod_destin;
-        $existrxc->Bod_destin = $registrosI15[0]->EX_BODSEDE;
-        $existrxc->ex_trx_cos = 'S';
-        $existrxc->Ex_recde = session()->get('Usu_usuario');
-        $existrxc->save();
-
-        $existrxl = new EXISTRXL;
-        $existrxl->MOV_FOLIO = $Mov_serie;
-        $existrxl->Ex_mov_cod = $cod_mov;
-        $existrxl->Mb_Epr_cod = $this->Emp;
-        $existrxl->EX_LINEA = 1;
-        $existrxl->Art_cod = $registrosI15[1]->Art_cod;
-        $existrxl->MOV_ART_CA = $registrosI15[1]->MOV_ART_CA;
-        $existrxl->MOV_ART_VA = $registrosI15[1]->MOV_ART_VA;
-        $existrxl->MOV_ART_UM = 'UN';
-        $existrxl->mov_art_tc = ($registrosI15[1]->MOV_ART_CA * $registrosI15[1]->MOV_ART_VA);
-        $existrxl->BOD_EXIS = $registrosI15[0]->Bod_destin;
-        $existrxl->Mov_ubi_co = 'EXI';
-        $existrxl->Ex_art_bar = $registrosI15[1]->mov_art_cb;
-        $existrxl->art_lote = $registrosI15[1]->art_lote;
-        $existrxl->Art_Fec_Vc = $registrosI15[1]->Art_Fec_Vc;
-        $existrxl->save();
-
-        return array($existrxc, $existrxl);
-    }
-
-    private function actualizarLote($registrosD1)
-    { //Actualiza stock lote (Rec_codigo)
-        $existock = EXISTOCK::where('Mb_Epr_cod', '=', $this->Emp)
-            ->where('Ex_art_cod', '=', $registrosD1[1]->Art_cod)
-            ->where('Ex_bod_cod', '=', $registrosD1[1]->BOD_EXIS)
-            ->where('Ex_ubi_cod', '=', $registrosD1[1]->Mov_ubi_co)
-            ->first();
-        if ($existock) {
-            $existock->Ex_art_cau = $registrosD1[1]->Ex_mov_cod;
-            $existock->Ex_art_trx = $registrosD1[1]->MOV_FOLIO;
-            $existock->Ex_art_Ftr = date("d/m/Y");
-            $existock->Ex_art_hor = date("H:i:s");
-            $existock->Stock_actu = $existock->Stock_actu - $registrosD1[1]->MOV_ART_CA;
-            if ($registrosD1[1]->articulo()->first()->Art_ind_se == 'S') { //Rebaja Lote
-                $existkxl = EXISTKXL::where('Mb_Epr_cod', '=', $this->Emp)
-                    ->where('Ex_bod_cod', '=', $registrosD1[1]->BOD_EXIS)
-                    ->where('Ex_art_cod', '=', $registrosD1[1]->Art_cod)
-                    ->where('Ex_nro_lot', '=', $registrosD1[1]->art_lote)
-                    ->where('Ex_prv_cod', '=', 99)
-                    ->first();
-                if ($existkxl) {
-                    $existkxl->Ex_lot_cst = $registrosD1[1]->MOV_ART_VA;
-                    $existkxl->Ex_lot_fec = $registrosD1[1]->Art_Fec_Vc;
-                    $existkxl->Ex_lot_can = $existkxl->Ex_lot_can - $registrosD1[1]->MOV_ART_CA;
-                    $existkxl->update();
-                } else {
-                    $existkxl = new EXISTKXL;
-                    $existkxl->Mb_Epr_cod = $this->Emp;
-                    $existkxl->Ex_bod_cod = $registrosD1[1]->BOD_EXIS;
-                    $existkxl->Ex_art_cod = $registrosD1[1]->Art_cod;
-                    $existkxl->Ex_nro_lot = $registrosD1[1]->art_lote;
-                    $existkxl->Ex_prv_cod = 99;
-                    $existkxl->Ex_lot_cst = $registrosD1[1]->MOV_ART_VA;
-                    $existkxl->Ex_lot_fec = $registrosD1[1]->Art_Fec_Vc;
-                    $existkxl->Ex_lot_can = $registrosD1[1]->MOV_ART_CA * -1;
-                    $existkxl->save();
-                }
-            }
-            $existock->update();
-        } else {
-            $existock = new EXISTOCK;
-            $existock->Mb_Epr_cod = $this->Emp;
-            $existock->Ex_art_cod = $registrosD1[1]->Art_cod;
-            $existock->Ex_bod_cod = $registrosD1[1]->BOD_EXIS;
-            $existock->Ex_ubi_cod = $registrosD1[1]->Mov_ubi_co;
-            $existock->Ex_art_Ftr = date("d/m/Y");
-            $existock->Ex_art_hor = date("H:i:s");
-            $existock->Ex_art_cau = $registrosD1[1]->Ex_mov_cod;
-            $existock->Ex_art_trx = $registrosD1[1]->MOV_FOLIO;
-            $existock->Stock_actu = $registrosD1[1]->MOV_ART_CA * -1;
-
-            $existock->save();
-        }
-        $registrosD1[0]->EX_ESTDOC = 'C';
-        $registrosD1[0]->update();
-    }
 
     private function rebajandoMateriales($registrosI15, $receta)
     {

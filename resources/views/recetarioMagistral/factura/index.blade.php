@@ -68,7 +68,7 @@ Recetas
                                     <span class="tag-success tooltipsC" title="SIC preparada">Preparada</span>
                                 </td>
                                 @else
-                                @if ($linea->recetas->sum('Rec_unidades') > 0 && $linea->recetas->sum('Rec_unidades') <
+                                @if ($linea->recetas->sum('Rec_unidades') > 0 && $linea->recetas->sum('Rec_unidades')<
                                     round($linea->SicArtCan, 2))
                                     <td>
                                         <span class="tag-warning tooltipsC" title="SIC sin preparar">Incompleta</span>

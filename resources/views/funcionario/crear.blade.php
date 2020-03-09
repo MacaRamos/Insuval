@@ -10,7 +10,7 @@ Crear Funcionario
 <script src="{{asset("assets/$theme/plugins/inputmask/min/jquery.inputmask.bundle.min.js")}}"></script>
 @include('includes.mensaje')
 <script>
-$("#rut").inputmask({
+    $("#rut").inputmask({
 	mask: "9[9.999.999]-[9|k]",
     placeholder: ''
 });
