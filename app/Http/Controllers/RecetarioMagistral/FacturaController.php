@@ -331,7 +331,7 @@ class FacturaController extends Controller
             $textoXML = mb_convert_encoding($xmlstr, "UTF-8");
 
             $slash = '\\';
-            $ruta = "C:\\APPS\\StorageLibs\\test" . $slash . $tipoDocto . $fac_nro . ".xml";
+            $ruta = tmpfile(); //"C:\\APPS\\StorageLibs\\test" . $slash . $tipoDocto . $fac_nro . ".xml";
             $gestor = fopen($ruta, 'w');
             fwrite($gestor, $textoXML);
             fclose($gestor);
