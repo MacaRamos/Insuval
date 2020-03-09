@@ -20,6 +20,7 @@ use App\Models\MovimientoInventario\EXISTRXL;
 use App\Models\RecetarioMagistral\Receta;
 use App\Models\Seguridad\TSEG02;
 use App\Models\SIC\ADSICTRX;
+use COM;
 use DateTime;
 use Illuminate\Http\Request;
 
@@ -330,7 +331,8 @@ class FacturaController extends Controller
             $textoXML = mb_convert_encoding($xmlstr, "UTF-8");
 
             $slash = '\\';
-            $gestor = fopen($slash . "\\venus\dtestorage.cl\EMISORES\INSUVAL\ENTRADA" . $slash . $tipoDocto . $fac_nro . ".xml", 'w');
+            $ruta = "C:\\APPS\\StorageLibs\\test" . $slash . $tipoDocto . $fac_nro . ".xml";
+            $gestor = fopen($ruta, 'w');
             fwrite($gestor, $textoXML);
             fclose($gestor);
             //  DB::listen(function ($query) {
@@ -340,18 +342,24 @@ class FacturaController extends Controller
             //         echo "<pre>". print_r($query->bindings,1). "</pre>";
             //      }
             //  });
+
+            $services = new COM("StorageServices");
+            $storage = $services->ConnectStorage("net.tcp://venus:6105/Storage");
+
+            $resultado = $storage->storeDocumento(77768990, $ruta);
+            
+            $storage = null;
+            $services = null;         
+
             $dteemitidos = null;
-            for ($i = 1; $i < 5; $i++) {
+            if($resultado == 0)
+            {
                 $dteemitidos = DTEEMITIDOS::select('dteHash')->where('emisorRut', '=', 77768990)
-                    ->where('dteTipo', '=', 33)
-                    ->where('dteFolio', '=', $fac_nro)
-                    ->first();
-                if ($dteemitidos == null) {
-                    sleep(1);
-                } else {
-                    break;
-                }
+                ->where('dteTipo', '=', 33)
+                ->where('dteFolio', '=', $fac_nro)
+                ->first();
             }
+            
             if ($dteemitidos == null) {
                 $notificacion = array(
                     'mensaje' => 'No se pudo facturar, contácte al administrador de facturación electrónica',
@@ -381,11 +389,11 @@ class FacturaController extends Controller
                        ->first();
         $registrosI15 = array();
         $existrxc = EXISTRXC::where('Mb_Epr_cod', '=', $this->Emp)
-                                ->where('ex_num_ord', '=', $sic->SicFol)
-                                ->where('ex_num_oc', '=', $sic->SicPOnro)
-                                ->where('ex_cod_aux', '=', $sic->Ve_Cod_Cli)
-                                ->where('Ex_mov_cod', '=', 'I15')
-                                ->first();
+                            ->where('ex_num_ord', '=', $sic->SicFol)
+                            ->where('ex_num_oc', '=', $sic->SicPOnro)
+                            ->where('ex_cod_aux', '=', $sic->Ve_Cod_Cli)
+                            ->where('Ex_mov_cod', '=', 'I15')
+                            ->first();
         array_push($registrosI15, $existrxc);
 
         $existrxl = EXISTRXL::where('MOV_FOLIO', '=', $registrosI15[0]->MOV_FOLIO)
